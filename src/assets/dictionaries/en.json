@@ -1,0 +1,310 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "select": "Select",
+    "selected": "Selected",
+    "update": "Update",
+    "create": "Create",
+    "duplicate": "Create copy",
+    "moreActions": "More actions",
+    "refresh": "Refresh",
+    "home": "Home",
+    "view": "View",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "actionCannotBeUndone": "This action cannot be undone.",
+    "warning": "Warning"
+  },
+  "table": {
+    "pagination": {
+      "first": "First",
+      "previous": "Previous",
+      "next": "Next",
+      "last": "Last",
+      "page": "Page",
+      "of": "of",
+      "rowsPerPage": "Rows per page:",
+      "showing": "Showing",
+      "total": "Total",
+      "rows": "rows"
+    },
+    "filter": {
+      "placeholder": "Filter {column}..."
+    },
+    "states": {
+      "loading": "Loading...",
+      "noData": "No data available",
+      "error": "Error: {error}"
+    }
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "signUp": "Sign Up",
+    "welcome": "Welcome",
+    "loginStatus": "Login Status",
+    "loggedIn": "Logged in as",
+    "notLoggedIn": "You are not logged in",
+    "userSettings": "User Settings",
+    "autoUpdateAvatar": "Automatic avatar updates",
+    "autoUpdateDescription": "Allow automatic downloading and updating of avatar from identity server",
+    "lastUpdate": "Last update"
+  },
+  "settings": {
+    "drawer": {
+      "title": "Application Settings",
+      "language": {
+        "title": "Application Language",
+        "czech": "🇨🇿 Čeština",
+        "english": "🇬🇧 English"
+      },
+      "colorScheme": {
+        "title": "Color Scheme",
+        "auto": "🔄 Auto",
+        "light": "☀️ Light",
+        "dark": "🌙 Dark"
+      },
+      "tableRows": {
+        "title": "Table Rows Count"
+      },
+      "userAccount": {
+        "title": "User Account",
+        "loggedInAs": "Logged in as"
+      },
+      "emailPreferences": {
+        "title": "Email Notifications",
+        "receive": {
+          "label": "Receive email notifications",
+          "description": "Notifications about important events on your account"
+        },
+        "send": {
+          "label": "Notify others of my actions",
+          "description": "When you perform an action affecting other users, the app emails them. Turn this off when bulk-editing."
+        }
+      },
+      "actions": {
+        "resetToDefaults": "Reset to Defaults",
+        "close": "Close"
+      },
+      "notifications": {
+        "languageChanged": {
+          "title": "Language Changed",
+          "messageCzech": "Application switched to Czech",
+          "messageEnglish": "Application switched to English"
+        },
+        "colorSchemeChanged": {
+          "title": "Color Scheme Changed",
+          "messageAuto": "Switched to automatic mode",
+          "messageLight": "Switched to light mode",
+          "messageDark": "Switched to dark mode"
+        },
+        "tableRowsChanged": {
+          "title": "Table Settings Changed",
+          "message": "Row count set to"
+        },
+        "settingsReset": {
+          "title": "Settings Reset",
+          "message": "All settings have been reset to default values"
+        },
+        "emailPreferenceChanged": {
+          "title": "Settings saved",
+          "messageReceiveOn": "You will receive email notifications",
+          "messageReceiveOff": "Email notifications are turned off",
+          "messageSendOn": "Your actions will notify others by email",
+          "messageSendOff": "Your actions will no longer email anyone",
+          "error": "Failed to save settings"
+        }
+      }
+    }
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page Not Found",
+      "message": "The requested page was not found or no longer exists.",
+      "description": "You may have entered an incorrect address, or the page has moved elsewhere.",
+      "backHome": "Back Home"
+    },
+    "forbidden": {
+      "title": "Access Denied",
+      "message": "You do not have permission to view this page. Contact an administrator if you should have access.",
+      "description": "Accessing this part of the application requires special permission. If you believe you should have access, contact your system administrator."
+    },
+    "unauthorized": {
+      "title": "Sign-in required",
+      "message": "You need to sign in to access this page.",
+      "description": "Your session may have expired, or you are not signed in yet. Click the button below to return to the home page.",
+      "backHome": "Sign In"
+    },
+    "serverError": {
+      "title": "Something Went Wrong",
+      "message": "An unexpected error occurred. Please try again.",
+      "tryAgain": "Try Again",
+      "reportError": "If the problem persists, please send an error report to the administrator. The error has been automatically logged for further analysis."
+    }
+  },
+  "pages": {
+    "dashboard": "Administration",
+    "users": {
+      "list": "Users",
+      "detail": "User Detail",
+      "edit": "Edit User",
+      "create": "Create User"
+    }
+  },
+  "dashboard": {
+    "menu": {
+      "home": "Home",
+      "users": "Users",
+      "logs": "Logs"
+    }
+  },
+  "logs": {
+    "title": "System Logs",
+    "breadcrumbs": {
+      "logs": "Logs"
+    },
+    "levels": {
+      "all": "All",
+      "debug": "Debug",
+      "info": "Info",
+      "warn": "Warn",
+      "error": "Error"
+    },
+    "fields": {
+      "file": "File",
+      "filePlaceholder": "Select a log file",
+      "level": "Level",
+      "filter": "Filter",
+      "filterPlaceholder": "Text in log"
+    },
+    "actions": {
+      "refresh": "Refresh"
+    },
+    "stats": {
+      "loadedLines": "Lines loaded",
+      "matched": "Matches"
+    },
+    "messages": {
+      "loadError": "Failed to load logs",
+      "fileNotFound": "File not found",
+      "noMatches": "No entry matches the filter."
+    }
+  },
+  "users": {
+    "title": "Users",
+    "detail": "User Detail",
+    "create": "New User",
+    "edit": "Edit User",
+    "deleteTitle": "Delete User",
+    "profile": "Your Profile",
+    "actions": {
+      "newRecord": "New Record",
+      "editUser": "Edit",
+      "deleteUser": "Delete",
+      "viewDetail": "Detail",
+      "backToList": "Back to Users List",
+      "syncAvatars": "Sync Avatars",
+      "syncActive": "Check Active Status"
+    },
+    "fields": {
+      "givenName": "First Name",
+      "middleName": "Middle Name",
+      "familyName": "Last Name",
+      "email": "Email",
+      "sub": "OAuth ID",
+      "name": "Display Name",
+      "image": "Avatar",
+      "roles": "Roles",
+      "admin": "Admin",
+      "member": "Member",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "lastLogin": "Last Login"
+    },
+    "form": {
+      "required": "Required field",
+      "invalidEmail": "Invalid email",
+      "saveUser": "Save User",
+      "createUser": "Create User",
+      "personalInfo": "Personal Information",
+      "timeInfo": "Time Information",
+      "emailSelfEditHint": "Email is managed by the OAuth server - only an administrator can change it",
+      "validation": {
+        "givenNameRequired": "First name is required",
+        "familyNameRequired": "Last name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email format",
+        "subRequired": "OAuth ID is required"
+      }
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "roles": "Roles",
+      "actions": "Actions",
+      "noUsers": "No users found"
+    },
+    "delete": {
+      "title": "Delete User",
+      "warning": "Warning!",
+      "irreversible": "This action is irreversible!",
+      "confirmText": "Do you really want to delete user",
+      "cancel": "Cancel",
+      "confirm": "Delete User"
+    },
+    "messages": {
+      "userCreated": "User has been successfully created",
+      "userUpdated": "User has been successfully updated",
+      "userDeleted": "has been successfully deleted",
+      "userNotFound": "User not found",
+      "loadError": "An error occurred while loading user details",
+      "deleteError": "An error occurred while deleting user",
+      "createError": "An error occurred while creating user",
+      "updateError": "An error occurred while updating user",
+      "adminSelfDelete": "Administrators cannot delete their own account",
+      "lastAdmin": "Cannot delete the last administrator",
+      "permissionDenied": "Only administrators can delete users",
+      "success": "Success",
+      "error": "Error",
+      "avatarsSyncing": "Syncing avatars, this may take a while...",
+      "avatarsSynced": "Avatar sync finished",
+      "avatarsSyncedSummary": "Updated {updated} of {total}, {failed} failed",
+      "avatarsSyncError": "Failed to start avatar sync",
+      "activeSyncing": "Checking active status, this may take a while...",
+      "activeSynced": "Active status check finished",
+      "activeSyncedSummary": "Deactivated {deactivated} of {total}, {failed} failed",
+      "activeSyncError": "Failed to start active status check"
+    },
+    "breadcrumbs": {
+      "administration": "Administration",
+      "users": "Users",
+      "detail": "Detail",
+      "create": "New User",
+      "edit": "Edit User"
+    },
+    "roleLabels": {
+      "yes": "Yes",
+      "no": "No"
+    }
+  }
+}

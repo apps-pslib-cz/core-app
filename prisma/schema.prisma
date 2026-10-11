@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime? @map("email_verified")
+  image           String?
+  sub             String?   @unique
+  entraId         String?   @unique @map("entra_id")
+  teamsUserId     String?   @map("teams_user_id")
+  givenName       String?   @map("given_name")
+  middleName      String?   @map("middle_name")
+  familyName      String?   @map("family_name")
+  avatarData      Bytes?    @map("avatar_data")
+  allowAutoUpdate Boolean   @default(true) @map("allow_auto_update")
+  // Obecný seznam rolí místo pevné trojice admin/evaluator/author - konkrétní
+  // appka si názvy rolí definuje sama jako konstanty (viz src/types/roles.ts),
+  // tahle vrstva jen ukládá a čte string[]. Postgres array, ne enum - nová
+  // role tedy nevyžaduje migraci schématu.
+  roles           String[]  @default([])
+  notifyByEmail   Boolean   @default(true) @map("notify_by_email")
+  notifyByTeams   Boolean   @default(false) @map("notify_by_teams")
+  sendActionNotifications Boolean @default(true) @map("send_action_notifications") // false = akce tohoto uživatele nespustí notifikace ostatním zúčastněným - hodí se při hromadných úpravách starých dat
+  isTestAccount   Boolean   @default(false) @map("is_test_account") // testovací účet bez reálné e-mailové adresy, notifikace se pro něj nezasílají
+  active          Boolean   @default(true) // false = uživatel už na škole není; skryje se z běžných výběrů, ale zůstává v administraci a historických datech
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  lastLoginAt     DateTime? @map("last_login_at")
+
+  accounts Account[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("verificationtokens")
+}

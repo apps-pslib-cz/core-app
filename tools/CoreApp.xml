@@ -1,0 +1,35 @@
+<service>
+  <!--
+    WinSW konfigurace šablony. Appka postavená na core-app přejmenuje
+    <id>/<name>/<description>/cesty/port podle sebe - viz
+    docs/deployment.md a scripts/README.md. Soubor samotný se jinak
+    nemění.
+  -->
+  <id>CoreApp</id>
+  <name>CoreApp</name>
+  <description>Next.js app - core-app šablona na portu 3100</description>
+  <executable>C:\Program Files\nodejs\node.exe</executable>
+  <arguments>server.js</arguments>
+  <workingdirectory>C:\inetpub\core-app</workingdirectory>
+
+  <env name="NODE_ENV" value="production"/>
+  <env name="PORT" value="3100"/>
+  <env name="AUTH_TRUST_HOST" value="true"/>
+
+  <log mode="roll-by-size">
+    <sizeThreshold>10240</sizeThreshold>
+    <keepFiles>8</keepFiles>
+  </log>
+
+  <logpath>C:\inetpub\core-app\logs</logpath>
+
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+
+  <onfailure action="restart" delay="10 sec"/>
+  <onfailure action="restart" delay="20 sec"/>
+  <onfailure action="restart" delay="1 min"/>
+  <resetfailure>1 hour</resetfailure>
+
+  <stoptimeout>30 sec</stoptimeout>
+</service>

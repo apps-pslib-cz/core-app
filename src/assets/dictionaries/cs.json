@@ -1,0 +1,310 @@
+{
+  "common": {
+    "loading": "Načítá se...",
+    "error": "Chyba",
+    "success": "Úspěch",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "close": "Zavřít",
+    "back": "Zpět",
+    "next": "Další",
+    "previous": "Předchozí",
+    "search": "Hledat",
+    "filter": "Filtrovat",
+    "clear": "Vymazat",
+    "submit": "Odeslat",
+    "confirm": "Potvrdit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "add": "Přidat",
+    "remove": "Odebrat",
+    "select": "Vyberte",
+    "selected": "Vybrané",
+    "update": "Aktualizovat",
+    "create": "Vytvořit",
+    "duplicate": "Vytvořit kopii",
+    "moreActions": "Další akce",
+    "refresh": "Obnovit",
+    "home": "Domů",
+    "view": "Zobrazit",
+    "actions": "Akce",
+    "yes": "Ano",
+    "no": "Ne",
+    "createdAt": "Vytvořeno",
+    "updatedAt": "Upraveno",
+    "actionCannotBeUndone": "Tato akce je nevratná.",
+    "warning": "Varování"
+  },
+  "table": {
+    "pagination": {
+      "first": "První",
+      "previous": "Předchozí",
+      "next": "Další",
+      "last": "Poslední",
+      "page": "Stránka",
+      "of": "z",
+      "rowsPerPage": "Řádků na stránku:",
+      "showing": "Zobrazeno",
+      "total": "Celkem",
+      "rows": "řádků"
+    },
+    "filter": {
+      "placeholder": "Filtrovat {column}..."
+    },
+    "states": {
+      "loading": "Načítá se...",
+      "noData": "Žádná data k zobrazení",
+      "error": "Chyba: {error}"
+    }
+  },
+  "auth": {
+    "signIn": "Přihlásit se",
+    "signOut": "Odhlásit se",
+    "signUp": "Registrovat se",
+    "welcome": "Vítejte",
+    "loginStatus": "Stav přihlášení",
+    "loggedIn": "Přihlášen jako",
+    "notLoggedIn": "Nejste přihlášeni",
+    "userSettings": "Uživatelská nastavení",
+    "autoUpdateAvatar": "Automatické aktualizace avatara",
+    "autoUpdateDescription": "Povolit automatické stahování a aktualizaci avatara z identity serveru",
+    "lastUpdate": "Poslední aktualizace"
+  },
+  "settings": {
+    "drawer": {
+      "title": "Nastavení aplikace",
+      "language": {
+        "title": "Jazyk aplikace",
+        "czech": "🇨🇿 Čeština",
+        "english": "🇬🇧 English"
+      },
+      "colorScheme": {
+        "title": "Barevné schéma",
+        "auto": "🔄 Auto",
+        "light": "☀️ Světlý",
+        "dark": "🌙 Tmavý"
+      },
+      "tableRows": {
+        "title": "Počet řádků v tabulkách"
+      },
+      "userAccount": {
+        "title": "Uživatelský účet",
+        "loggedInAs": "Přihlášen jako"
+      },
+      "emailPreferences": {
+        "title": "E-mailové notifikace",
+        "receive": {
+          "label": "Dostávat e-mailové notifikace",
+          "description": "Upozornění na důležité události ve vašem účtu"
+        },
+        "send": {
+          "label": "Upozorňovat ostatní na mé akce",
+          "description": "Když provedete akci týkající se jiných uživatelů, appka jim pošle e-mail. Vypněte při hromadných úpravách."
+        }
+      },
+      "actions": {
+        "resetToDefaults": "Obnovit výchozí",
+        "close": "Zavřít"
+      },
+      "notifications": {
+        "languageChanged": {
+          "title": "Jazyk změněn",
+          "messageCzech": "Aplikace byla přepnuta na češtinu",
+          "messageEnglish": "Aplikace byla přepnuta na angličtinu"
+        },
+        "colorSchemeChanged": {
+          "title": "Barevné schéma změněno",
+          "messageAuto": "Přepnuto na automatický režim",
+          "messageLight": "Přepnuto na světlý režim",
+          "messageDark": "Přepnuto na tmavý režim"
+        },
+        "tableRowsChanged": {
+          "title": "Nastavení tabulek změněno",
+          "message": "Počet řádků nastaven na"
+        },
+        "settingsReset": {
+          "title": "Nastavení obnoveno",
+          "message": "Všechna nastavení byla obnovena na výchozí hodnoty"
+        },
+        "emailPreferenceChanged": {
+          "title": "Nastavení uloženo",
+          "messageReceiveOn": "Budete dostávat e-mailové notifikace",
+          "messageReceiveOff": "E-mailové notifikace jsou vypnuté",
+          "messageSendOn": "Vaše akce budou ostatní upozorňovat e-mailem",
+          "messageSendOff": "Vaše akce nebudou nikomu posílat e-mail",
+          "error": "Nepodařilo se uložit nastavení"
+        }
+      }
+    }
+  },
+  "errors": {
+    "notFound": {
+      "title": "Stránka nenalezena",
+      "message": "Požadovaná stránka nebyla nalezena nebo již neexistuje.",
+      "description": "Možná jste zadali nesprávnou adresu, nebo se stránka přesunula na jiné místo.",
+      "backHome": "Zpět domů"
+    },
+    "forbidden": {
+      "title": "Přístup odepřen",
+      "message": "Nemáte oprávnění pro zobrazení této stránky. Kontaktujte administrátora, pokud byste měli mít přístup.",
+      "description": "Pro přístup k této části aplikace je potřeba speciální oprávnění. Pokud si myslíte, že by vám měl být přístup udělen, obraťte se na správce systému."
+    },
+    "unauthorized": {
+      "title": "Vyžaduje se přihlášení",
+      "message": "Pro přístup k této stránce se musíte nejprve přihlásit.",
+      "description": "Vaše relace možná vypršela nebo ještě nejste přihlášeni. Klikněte na tlačítko níže pro návrat na hlavní stránku.",
+      "backHome": "Přihlásit se"
+    },
+    "serverError": {
+      "title": "Něco se pokazilo",
+      "message": "Vyskytla se neočekávaná chyba. Zkuste to prosím znovu.",
+      "tryAgain": "Zkusit znovu",
+      "reportError": "Pokud problém přetrvává, pošlete prosím chybový report administrátorovi. Chyba byla automaticky zaznamenána pro další analýzu."
+    }
+  },
+  "pages": {
+    "dashboard": "Administrace",
+    "users": {
+      "list": "Uživatelé",
+      "detail": "Detail uživatele",
+      "edit": "Upravit uživatele",
+      "create": "Vytvořit uživatele"
+    }
+  },
+  "dashboard": {
+    "menu": {
+      "home": "Domů",
+      "users": "Uživatelé",
+      "logs": "Logy"
+    }
+  },
+  "logs": {
+    "title": "Systémové logy",
+    "breadcrumbs": {
+      "logs": "Logy"
+    },
+    "levels": {
+      "all": "Všechny",
+      "debug": "Debug",
+      "info": "Info",
+      "warn": "Warn",
+      "error": "Error"
+    },
+    "fields": {
+      "file": "Soubor",
+      "filePlaceholder": "Vyberte log soubor",
+      "level": "Úroveň",
+      "filter": "Filtr",
+      "filterPlaceholder": "Text v logu"
+    },
+    "actions": {
+      "refresh": "Obnovit"
+    },
+    "stats": {
+      "loadedLines": "Načteno řádků",
+      "matched": "Shoda"
+    },
+    "messages": {
+      "loadError": "Nepodařilo se načíst logy",
+      "fileNotFound": "Soubor nebyl nalezen",
+      "noMatches": "Žádný záznam neodpovídá filtru."
+    }
+  },
+  "users": {
+    "title": "Uživatelé",
+    "detail": "Detail uživatele",
+    "create": "Nový uživatel",
+    "edit": "Upravit uživatele",
+    "deleteTitle": "Smazat uživatele",
+    "profile": "Váš profil",
+    "actions": {
+      "newRecord": "Nový záznam",
+      "editUser": "Upravit",
+      "deleteUser": "Smazat",
+      "viewDetail": "Detail",
+      "backToList": "Zpět na seznam uživatelů",
+      "syncAvatars": "Aktualizovat avatary",
+      "syncActive": "Zkontrolovat aktivitu"
+    },
+    "fields": {
+      "givenName": "Křestní jméno",
+      "middleName": "Prostřední jméno",
+      "familyName": "Příjmení",
+      "email": "Email",
+      "sub": "OAuth ID",
+      "name": "Zobrazované jméno",
+      "image": "Avatar",
+      "roles": "Role",
+      "admin": "Admin",
+      "member": "Member",
+      "createdAt": "Vytvořen",
+      "updatedAt": "Upraven",
+      "lastLogin": "Poslední přihlášení"
+    },
+    "form": {
+      "required": "Povinné pole",
+      "invalidEmail": "Neplatný email",
+      "saveUser": "Uložit uživatele",
+      "createUser": "Vytvořit uživatele",
+      "personalInfo": "Osobní údaje",
+      "timeInfo": "Časové údaje",
+      "emailSelfEditHint": "E-mail spravuje OAuth server, může ho změnit jen administrátor",
+      "validation": {
+        "givenNameRequired": "Křestní jméno je povinné",
+        "familyNameRequired": "Příjmení je povinné",
+        "emailRequired": "Email je povinný",
+        "emailInvalid": "Neplatný formát emailu",
+        "subRequired": "OAuth ID je povinné"
+      }
+    },
+    "table": {
+      "name": "Jméno",
+      "email": "Email",
+      "roles": "Role",
+      "actions": "Akce",
+      "noUsers": "Žádní uživatelé nenalezeni"
+    },
+    "delete": {
+      "title": "Smazání uživatele",
+      "warning": "Pozor!",
+      "irreversible": "Tato akce je nevratná!",
+      "confirmText": "Opravdu chcete smazat uživatele",
+      "cancel": "Zrušit",
+      "confirm": "Smazat uživatele"
+    },
+    "messages": {
+      "userCreated": "Uživatel byl úspěšně vytvořen",
+      "userUpdated": "Uživatel byl úspěšně aktualizován",
+      "userDeleted": "byl úspěšně smazán",
+      "userNotFound": "Uživatel nebyl nalezen",
+      "loadError": "Při načítání detailu uživatele došlo k chybě",
+      "deleteError": "Při mazání uživatele došlo k chybě",
+      "createError": "Při vytváření uživatele došlo k chybě",
+      "updateError": "Při aktualizaci uživatele došlo k chybě",
+      "adminSelfDelete": "Administrátoři nemohou smazat svůj vlastní účet",
+      "lastAdmin": "Nelze smazat posledního administrátora",
+      "permissionDenied": "Pouze administrátoři mohou mazat uživatele",
+      "success": "Úspěch",
+      "error": "Chyba",
+      "avatarsSyncing": "Avatary se aktualizují, může to chvíli trvat...",
+      "avatarsSynced": "Aktualizace avatarů dokončena",
+      "avatarsSyncedSummary": "Aktualizováno {updated} z {total}, {failed} se nepodařilo",
+      "avatarsSyncError": "Aktualizaci avatarů se nepodařilo spustit",
+      "activeSyncing": "Kontroluje se aktivita uživatelů, může to chvíli trvat...",
+      "activeSynced": "Kontrola aktivity dokončena",
+      "activeSyncedSummary": "Deaktivováno {deactivated} z {total}, {failed} se nepodařilo",
+      "activeSyncError": "Kontrolu aktivity se nepodařilo spustit"
+    },
+    "breadcrumbs": {
+      "administration": "Administrace",
+      "users": "Uživatelé",
+      "detail": "Detail",
+      "create": "Nový uživatel",
+      "edit": "Upravit uživatele"
+    },
+    "roleLabels": {
+      "yes": "Ano",
+      "no": "Ne"
+    }
+  }
+}

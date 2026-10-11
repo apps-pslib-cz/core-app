@@ -147,3 +147,17 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Next.js (project-specific)
+next-env.d.ts
+
+# Prisma - generovaný klient se nekomituje, vznikne znovu přes
+# `npx prisma generate`
+/src/generated
+
+# Playwright
+/playwright-report/
+/test-results/
+/playwright/.cache/
+/playwright/.auth/
+
