@@ -3,46 +3,24 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import DuendeIdentityServer6, {
   type DuendeISUser,
 } from "next-auth/providers/duende-identity-server6";
+import type { OAuthConfig, OIDCConfig } from "next-auth/providers";
 import { prisma } from "./prisma";
 import { downloadAvatar, shouldUpdateAvatar } from "./avatar-utils";
+import { OAUTH_SCOPE } from "./oauthUserRoles";
 import {
-  fetchOAuthRoleSnapshot,
-  fetchOAuthUserNameByEmail,
-  resolveUserRoles,
-  OAUTH_SCOPE,
-} from "./oauthUserRoles";
+  normalizeOAuthProfile,
+  profileDataFromProviderUser,
+  sessionUserFields,
+  toAdapterUser,
+  type OAuthProfileData,
+} from "./oauthProfile";
 import { logger } from "./logger";
-
-type ProfileWithClaims = DuendeISUser & {
-  sub?: string;
-  email?: string;
-  email_verified?: boolean;
-  given_name?: string;
-  givenName?: string;
-  first_name?: string;
-  firstName?: string;
-  middle_name?: string;
-  middleName?: string;
-  family_name?: string;
-  familyName?: string;
-  last_name?: string;
-  lastName?: string;
-  preferred_username?: string;
-  preferredUsername?: string;
-  name?: string;
-  display_name?: string;
-  displayName?: string;
-  picture?: string;
-  // vlastní role-claimy appky (viz ROLE_CLAIMS v src/types/roles.ts) -
-  // jejich název je datově řízený, proto index signature místo pevných polí.
-  [claim: string]: unknown;
-};
 
 const nextAuth = NextAuth({
   adapter: PrismaAdapter(prisma),
   trustHost: true,
   providers: [
-    DuendeIdentityServer6({
+    withUserinfoProfile(DuendeIdentityServer6({
       issuer: process.env.AUTH_DUENDE_IDENTITY_SERVER6_ISSUER!,
       clientId: process.env.AUTH_DUENDE_IDENTITY_SERVER6_ID!,
       clientSecret: process.env.AUTH_DUENDE_IDENTITY_SERVER6_SECRET!,
@@ -55,24 +33,13 @@ const nextAuth = NextAuth({
       // because the pre-created User row has no Account row yet - safe to
       // auto-link by email in this single-IdP setup.
       allowDangerousEmailAccountLinking: true,
+      // Výstup se při prvním přihlášení uloží adaptérem jako nový User -
+      // proto vrací i role a jméno, ne jen id/name/email/image. Jinak by
+      // nový uživatel dostal role až při druhém přihlášení (DECISIONS D-4).
       profile(raw) {
-        const p = raw as ProfileWithClaims;
-        const fullName =
-          [p.given_name, p.middle_name, p.family_name]
-            .filter(Boolean)
-            .join(" ") || null;
-        const displayName =
-          p.name ?? fullName ?? p.preferred_username ?? p.email ?? null;
-
-        return {
-          id: p.sub,
-          name: displayName ?? undefined,
-          email: p.email ?? undefined,
-          image: p.picture ?? undefined,
-          emailVerified: null,
-        };
+        return toAdapterUser(normalizeOAuthProfile(raw));
       },
-    }),
+    })),
   ],
   pages: {
     signIn: "/",
@@ -81,11 +48,11 @@ const nextAuth = NextAuth({
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      // Při každém přihlášení aktualizujeme uživatele v databázi
+      // Při každém přihlášení aktualizujeme uživatele v databázi. `profile`
+      // jsou tady surové claimy z userinfo (na rozdíl od events.linkAccount).
       if (account && profile && user) {
-        const p = profile as ProfileWithClaims;
-        const claimedSub = firstNonEmptyString(p.sub, account.providerAccountId);
-        const claimedEmail = firstNonEmptyString(user.email ?? undefined, p.email);
+        const data = normalizeOAuthProfile(profile);
+        const claimedEmail = data.email ?? user.email ?? null;
 
         let resolvedUserId = firstNonEmptyString(user.id);
 
@@ -114,12 +81,12 @@ const nextAuth = NextAuth({
           resolvedUserId = accountRecord?.userId ?? null;
         }
 
-        if (!resolvedUserId && claimedSub) {
+        if (!resolvedUserId) {
           // Case-insensitive: data přenesená ze staré DB mají GUID uložené
           // velkými písmeny, OAuth server je ale posílá malými - přesná
           // shoda (findUnique) by je nikdy nenašla.
           const userBySub = await prisma.user.findFirst({
-            where: { sub: { equals: claimedSub, mode: "insensitive" } },
+            where: { sub: { equals: data.sub, mode: "insensitive" } },
             select: { id: true },
           });
           resolvedUserId = userBySub?.id ?? null;
@@ -135,56 +102,24 @@ const nextAuth = NextAuth({
 
         if (!resolvedUserId) {
           // Uživatel v DB ještě neexistuje (nebyl pre-provisioned) - adaptér
-          // za chvíli vytvoří nový řádek sám. Obohacení pro tenhle případ
-          // proběhne v events.linkAccount, jakmile bude mít adaptér hotovo.
-          logger.warn(
-            "[Auth] Unable to resolve DB user for sign-in sync (likely a brand-new, non-pre-provisioned account — will be enriched via linkAccount event instead)",
-            {
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-              userId: user.id,
-              sub: claimedSub,
-              email: claimedEmail,
-            },
-          );
+          // ho za chvíli založí z výstupu provider.profile() už i s rolemi
+          // a jménem; avatar a lastLoginAt doplní events.linkAccount.
+          logger.info("[Auth] New user, will be created by adapter", {
+            provider: account.provider,
+            sub: data.sub,
+          });
           return true;
         }
 
-        await syncUserProfile(resolvedUserId, p, claimedSub, claimedEmail);
+        await syncUserProfile(resolvedUserId, { ...data, email: claimedEmail });
       }
       return true;
     },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
+    async session({ session, user }) {
+      // Database session: `user` je řádek z DB (adaptér), bez dalšího dotazu.
+      if (session.user && user) {
+        Object.assign(session.user, sessionUserFields(user));
       }
-      return token;
-    },
-    async session({ session, token }) {
-      if (!session.user) {
-        return session;
-      }
-
-      if (token?.id) {
-        session.user.id = token.id as string;
-      }
-
-      // Načteme aktuální data uživatele z databáze
-      if (session.user?.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: session.user.email },
-        });
-
-        if (dbUser) {
-          session.user.id = dbUser.id;
-          session.user.sub = dbUser.sub ?? undefined;
-          session.user.given_name = dbUser.givenName;
-          session.user.middle_name = dbUser.middleName;
-          session.user.family_name = dbUser.familyName;
-          session.user.roles = dbUser.roles;
-        }
-      }
-
       return session;
     },
   },
@@ -194,14 +129,18 @@ const nextAuth = NextAuth({
     // předtím, signIn callback ho tedy ještě nemohl najít) nebo o
     // pre-provisioned uživatele, u kterého to signIn callback už stihl
     // vyřešit. Pro pre-provisioned uživatele je to tedy neškodný duplicitní
-    // běh; pro úplně nové účty je to jediné místo, kde má obohacení šanci
-    // proběhnout hned při prvním přihlášení.
-    async linkAccount({ user, account, profile }) {
+    // běh; pro úplně nové účty doplní avatar a lastLoginAt. `profile` je
+    // tady výstup provider.profile(), ne surové claimy.
+    async linkAccount({ user, profile }) {
       if (!user.id || !profile) return;
-      const p = profile as ProfileWithClaims;
-      const claimedSub = firstNonEmptyString(p.sub, account.providerAccountId);
-      const claimedEmail = firstNonEmptyString(user.email ?? undefined, p.email);
-      await syncUserProfile(user.id, p, claimedSub, claimedEmail);
+      try {
+        await syncUserProfile(user.id, profileDataFromProviderUser(profile));
+      } catch (error) {
+        logger.error("[Auth] Failed to sync profile on linkAccount", {
+          userId: user.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     },
   },
 });
@@ -220,6 +159,20 @@ export async function signOutAction() {
 
 // --- pomocné funkce ---
 
+// Duende ve výchozím nastavení klienta nedává do ID tokenu e-mail, jméno
+// ani vlastní role-claimy (ROLE_CLAIMS) - v ID tokenu je jen sub. S idToken:
+// false Auth.js ID token dál vyžaduje a ověří, ale profil načte
+// z /connect/userinfo a ověří, že userinfo.sub odpovídá ID tokenu. Appka
+// tak pro přihlášení nepotřebuje admin API OAuth serveru (DECISIONS D-4).
+// Nastavuje se na configu providera, ne v jeho options -
+// OAuthUserConfig `idToken` v typech nemá; DuendeIdentityServer6 je vždy
+// typu "oidc", proto je cast bezpečný.
+function withUserinfoProfile<P extends DuendeISUser>(
+  provider: OAuthConfig<P>,
+): OIDCConfig<P> {
+  return { ...(provider as OIDCConfig<P>), idToken: false };
+}
+
 function firstNonEmptyString(...values: Array<string | null | undefined>): string | null {
   for (const value of values) {
     if (typeof value !== "string") continue;
@@ -234,12 +187,7 @@ function firstNonEmptyString(...values: Array<string | null | undefined>): strin
 // Sdílená obohacovací logika volaná jak ze signIn callbacku (pro už
 // existující/pre-provisioned uživatele), tak z events.linkAccount (pro
 // nově vytvořené účty, u kterých signIn callback ještě neměl koho najít).
-async function syncUserProfile(
-  userId: string,
-  p: ProfileWithClaims,
-  claimedSub: string | null,
-  claimedEmail: string | null,
-): Promise<void> {
+async function syncUserProfile(userId: string, data: OAuthProfileData): Promise<void> {
   try {
     // Načteme aktuální stav uživatele
     const currentUser = await prisma.user.findUnique({
@@ -249,143 +197,58 @@ async function syncUserProfile(
         avatarData: true,
         updatedAt: true,
         image: true,
+        email: true,
       },
     });
 
-    // Připrav data pro aktualizaci - lastLoginAt (a sub, pro budoucí
-    // dohledání) se aktualizují vždy, i kdyby dál něco selhalo -
-    // jinak by se přihlášení "technicky povedlo", ale uživatel by
-    // navždy zůstal bez rolí kvůli jedné přechodné chybě (např.
-    // výpadek admin API identity serveru).
+    // lastLoginAt a sub (pro budoucí dohledání) se aktualizují vždy, i kdyby
+    // dál něco selhalo.
     const updateData: {
-      sub?: string | null;
-      givenName?: string | null;
-      middleName?: string | null;
-      familyName?: string | null;
+      sub: string;
+      email?: string;
+      givenName?: string;
+      middleName?: string;
+      familyName?: string;
       roles?: string[];
-      active?: boolean;
       lastLoginAt: Date;
-      avatarData?: Uint8Array;
+      avatarData?: Uint8Array<ArrayBuffer>;
       image?: string;
       name?: string;
     } = {
       lastLoginAt: new Date(),
-      sub: claimedSub ?? null,
+      sub: data.sub,
     };
 
     // Pokud má uživatel povolenou auto-aktualizaci, aktualizuj všechny údaje.
-    // Vlastní try/catch: selhání obohacení (role ze vzdáleného API,
-    // stažení avataru) nesmí zabránit uložení lastLoginAt/sub výše.
+    // Vlastní try/catch: selhání obohacení (stažení avataru) nesmí zabránit
+    // uložení lastLoginAt/sub výše.
     if (!currentUser || currentUser.allowAutoUpdate) {
       try {
-        let givenName = firstNonEmptyString(
-          p.given_name,
-          p.givenName,
-          p.first_name,
-          p.firstName,
-        );
-        const middleName = firstNonEmptyString(p.middle_name, p.middleName);
-        let familyName = firstNonEmptyString(
-          p.family_name,
-          p.familyName,
-          p.last_name,
-          p.lastName,
-        );
-
-        // Stejně jako u rolí: ID token/profil při prvním přihlášení často
-        // neobsahuje given_name/family_name. Dohledáme je stejným admin API,
-        // které používá i vyhledávání uživatelů při importu.
-        if (!givenName && !familyName && claimedEmail) {
-          try {
-            const nameSnapshot = await fetchOAuthUserNameByEmail(claimedEmail);
-            if (nameSnapshot) {
-              givenName = nameSnapshot.givenName;
-              familyName = nameSnapshot.familyName;
-              logger.info(
-                "[Auth] Name claims not in profile, fetched via admin API fallback",
-                { userId, givenName, familyName },
-              );
-            }
-          } catch (nameError) {
-            logger.error(
-              "[Auth] Failed to fetch name snapshot fallback from identity server (keeping name unresolved for this login)",
-              {
-                userId,
-                error:
-                  nameError instanceof Error ? nameError.message : String(nameError),
-              },
-            );
-          }
+        // E-mail se jen doplňuje, když chybí (DECISIONS D-4) - přepsání
+        // existujícího by změnilo klíč, podle kterého se páruje
+        // pre-provisioned účet (allowDangerousEmailAccountLinking).
+        if (data.email && !currentUser?.email) {
+          const emailTaken = await prisma.user.findUnique({
+            where: { email: data.email },
+            select: { id: true },
+          });
+          if (!emailTaken) updateData.email = data.email;
         }
 
-        // Aktualizuj osobní údaje - jen když se skutečně podařilo něco
-        // zjistit. Když claimy v ID tokenu chybí A ZÁROVEŇ selže i admin API
-        // fallback výše, nesmíme tím přepsat už uloženou správnou hodnotu
-        // v DB prázdnou - to by při jednom neúspěšném přihlášení smazalo
-        // dřív správně vyplněné jméno/příjmení.
-        if (givenName) updateData.givenName = givenName;
-        if (middleName) updateData.middleName = middleName;
-        if (familyName) updateData.familyName = familyName;
+        // Prázdnou hodnotou nepřepisujeme už uložené jméno.
+        if (data.givenName) updateData.givenName = data.givenName;
+        if (data.middleName) updateData.middleName = data.middleName;
+        if (data.familyName) updateData.familyName = data.familyName;
+        if (data.name) updateData.name = data.name;
 
-        let resolvedRoles = resolveUserRoles(p);
-        let roleFallbackFailed = false;
-        let stillCurrent: boolean | undefined;
-
-        if (claimedSub && resolvedRoles.length === 0) {
-          try {
-            const snapshot = await fetchOAuthRoleSnapshot(claimedSub);
-            resolvedRoles = snapshot.roles;
-            stillCurrent = snapshot.stillCurrent;
-            logger.info(
-              "[Auth] Role claims not in profile, fetched via admin API fallback",
-              { userId, roles: resolvedRoles },
-            );
-          } catch (snapshotError) {
-            // Ani claimy, ani fallback nic nevrátily - nejde poznat, jestli
-            // uživatel opravdu nemá žádnou roli, nebo jen selhalo API. V
-            // žádném případě nesmíme rizikovat přepsání existujících rolí
-            // (třeba jediného admina) na prázdný seznam - role necháme,
-            // jaké jsou v DB.
-            roleFallbackFailed = true;
-            logger.error(
-              "[Auth] Failed to fetch role snapshot fallback from identity server (keeping existing roles in DB unchanged for this login)",
-              {
-                userId,
-                error:
-                  snapshotError instanceof Error
-                    ? snapshotError.message
-                    : String(snapshotError),
-              },
-            );
-          }
-        }
-
-        if (!roleFallbackFailed) {
-          updateData.roles = resolvedRoles;
-        }
-
-        // Jen směr "deaktivovat" (potvrzená bývalá role Exstudent/ExUčitel) -
-        // reaktivaci neřešíme, to dělá admin ručně v /dashboard/users.
-        if (stillCurrent === false) {
-          updateData.active = false;
-        }
-
-        // Sestavit celé jméno
-        const fullName =
-          [givenName, middleName, familyName].filter(Boolean).join(" ") || null;
-        const displayName =
-          p.name ??
-          p.display_name ??
-          p.displayName ??
-          fullName ??
-          p.preferred_username ??
-          p.preferredUsername ??
-          claimedEmail ??
-          null;
-        updateData.name = displayName;
+        // Role jsou jen z claimů userinfo (D-4). Selhání userinfo shodí
+        // celé přihlášení dřív, než se sem dojde, takže prázdný seznam tu
+        // znamená "uživatel opravdu nemá žádný role-claim z ROLE_CLAIMS"
+        // (nebo appka nemá nastavený AUTH_DUENDE_IDENTITY_SERVER6_SCOPE).
+        updateData.roles = data.roles;
 
         // Zkontroluj, zda je potřeba aktualizovat avatar
-        const avatarUrl = p.picture;
+        const avatarUrl = data.image;
         if (
           avatarUrl &&
           shouldUpdateAvatar(
@@ -422,7 +285,7 @@ async function syncUserProfile(
 
     await prisma.user.update({
       where: { id: userId },
-      data: updateData as Parameters<typeof prisma.user.update>[0]["data"],
+      data: updateData,
     });
 
     logger.info("[Auth] User updated on login", {

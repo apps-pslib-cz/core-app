@@ -7,7 +7,7 @@ Univerzální šablonová appka (Next.js App Router, Prisma/PostgreSQL, Mantine 
 ```
 npm install
 npx prisma generate
-npx prisma db push
+npx prisma migrate deploy   # založí/aktualizuje DB z prisma/migrations
 npm run dev
 ```
 
@@ -16,6 +16,14 @@ Potřebný `.env` (zkopírujte `.env.example` a vyplňte):
 - `DATABASE_URL` - PostgreSQL připojení.
 - `AUTH_URL`/`AUTH_SECRET` - NextAuth v5.
 - `AUTH_DUENDE_IDENTITY_SERVER6_ISSUER`/`_ID`/`_SECRET` - OAuth klient zaregistrovaný na `oauth.pslib.cz` (redirect URI `http://localhost:3000/api/auth/callback/duende-identity-server6`).
+- `AUTH_DUENDE_IDENTITY_SERVER6_SCOPE` - musí obsahovat vlastní scope appky s role-claimy z `ROLE_CLAIMS` (pro šablonu např. `openid profile email core`). Bez něj OAuth server role-claimy nepošle a nikdo nedostane žádnou roli. Výchozí hodnota je jen `openid profile email`.
+
+Nová migrace při vývoji: `npx prisma migrate dev --name <nazev>`. Potřebuje
+shadow databázi, takže DB uživatel musí mít právo `CREATEDB`, nebo musí
+být nastavená samostatná shadow DB. Lokální DB založená dřív přes
+`prisma db push` se na migrace převede jednou příkazem
+`npx prisma migrate resolve --applied 20261012000000_init` (schéma už
+odpovídá, migrace se jen označí jako použitá).
 
 ## Role appky
 

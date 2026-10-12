@@ -161,3 +161,7 @@ next-env.d.ts
 /playwright/.cache/
 /playwright/.auth/
 
+# Database backups (scripts/backup-database.ps1) - obsahují reálná
+# data, nikdy se nekomitují
+/backups/
+

@@ -100,6 +100,31 @@ Pokud `prisma migrate deploy` hlásí `must be owner of table X`, spusť
 jednou `scripts/fix-table-ownership.sql` (viz komentář v souboru pro
 vysvětlení a jak ho rozšířit o vlastní tabulky appky).
 
+## Záloha a obnovení databáze
+
+```powershell
+# Záloha podle .env (lokální dev DB)
+.\scripts\backup-database.ps1
+
+# Záloha produkční DB podle .env.production, do vlastní složky
+.\scripts\backup-database.ps1 -EnvFile .env.production -OutDir D:\Backups\core-app
+
+# Obnovení ze zálohy - vyžaduje vypsat přesný název cílové DB jako potvrzení
+.\scripts\restore-database.ps1 -BackupFile backups\core-app_core_20261012_120000.dump
+```
+
+Oba skripty čtou `DATABASE_URL` přímo ze zadaného `.env` souboru (`-EnvFile`,
+výchozí `.env`), ne z prostředí procesu — lze tak zálohovat/obnovit jiné
+prostředí, než se kterým právě běží dev server. `backup-database.ps1`
+vytvoří `pg_dump` zálohu v custom formátu (`-Fc`) do `backups/`
+(gitignored — zálohy obsahují reálná data, nikdy se nekomitují).
+`restore-database.ps1` je **destruktivní** (`pg_restore --clean
+--if-exists` smaže existující objekty v cílové databázi před jejich
+obnovením) — bez `-Force` vyžaduje interaktivní potvrzení přesným
+názvem cílové databáze.
+
+Vyžadují `pg_dump`/`pg_restore` na PATH (součást PostgreSQL instalace).
+
 ---
 
 **Více informací:** [docs/deployment.md](../docs/deployment.md)

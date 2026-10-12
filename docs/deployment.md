@@ -340,22 +340,29 @@ Get-Content "C:\inetpub\logs\LogFiles\W3SVC1\*.log" -Tail 50
 
 ---
 
-## Záloha
+## Záloha a obnovení databáze
 
 ```powershell
-# backup.ps1
-$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$backupPath = "C:\Backups\core-app\$timestamp"
-New-Item -ItemType Directory -Force -Path $backupPath
-
-pg_dump -U core_app -d core_app_prod | Out-File "$backupPath\database.sql"
-Copy-Item "C:\inetpub\core-app\.env.production" "$backupPath\"
-Copy-Item "C:\inetpub\core-app\web.config" "$backupPath\"
-
-Write-Host "Záloha dokončena: $backupPath"
+cd C:\inetpub\core-app
+.\scripts\backup-database.ps1 -EnvFile .env.production -OutDir D:\Backups\core-app
 ```
 
-Spouštějte pomocí Windows Task Scheduler.
+Vytvoří `pg_dump` zálohu v custom formátu (čte `DATABASE_URL` přímo z
+`.env.production`, ne z prostředí procesu). Spouštějte pravidelně přes
+Windows Task Scheduler. Zálohujte vedle toho i konfiguraci
+(`.env.production`, `web.config`) — ty `backup-database.ps1` neřeší,
+jsou to statické soubory, ne databáze:
+
+```powershell
+Copy-Item "C:\inetpub\core-app\.env.production" "D:\Backups\core-app\"
+Copy-Item "C:\inetpub\core-app\web.config" "D:\Backups\core-app\"
+```
+
+Obnovení (destruktivní — viz `scripts/README.md`):
+
+```powershell
+.\scripts\restore-database.ps1 -BackupFile D:\Backups\core-app\core-app_core_app_prod_20261012_120000.dump -EnvFile .env.production
+```
 
 ---
 
