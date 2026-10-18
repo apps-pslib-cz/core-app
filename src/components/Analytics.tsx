@@ -6,8 +6,12 @@ import Script from "next/script";
  * konfigurace nic nenačítá. Hodnoty čte server-side (Server Component),
  * takže nepotřebují `NEXT_PUBLIC_` prefix - nejde o tajemství, jen o ID
  * viditelné v HTML/network requestech stejně jako u každé jiné appky.
+ *
+ * `nonce` z CSP (src/proxy.ts, src/libs/csp.ts) musí mít každý <Script>,
+ * jinak ho prohlížeč nespustí. Domény, kam analytika posílá data, doplňuje
+ * do CSP buildCsp podle stejných proměnných.
  */
-export function Analytics() {
+export function Analytics({ nonce }: { nonce?: string }) {
   const umamiScriptUrl = process.env.UMAMI_SCRIPT_URL;
   const umamiWebsiteId = process.env.UMAMI_WEBSITE_ID;
   const googleAnalyticsId = process.env.GOOGLE_ANALYTICS_ID;
@@ -20,6 +24,7 @@ export function Analytics() {
           src={umamiScriptUrl}
           data-website-id={umamiWebsiteId}
           strategy="afterInteractive"
+          nonce={nonce}
         />
       )}
 
@@ -28,8 +33,9 @@ export function Analytics() {
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
             strategy="afterInteractive"
+            nonce={nonce}
           />
-          <Script id="google-analytics" strategy="afterInteractive">
+          <Script id="google-analytics" strategy="afterInteractive" nonce={nonce}>
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
@@ -41,7 +47,7 @@ export function Analytics() {
       )}
 
       {clarityProjectId && (
-        <Script id="microsoft-clarity" strategy="afterInteractive">
+        <Script id="microsoft-clarity" strategy="afterInteractive" nonce={nonce}>
           {`
             (function(c,l,a,r,i,t,y){
               c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};

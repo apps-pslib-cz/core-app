@@ -69,6 +69,9 @@ export default async function RootLayout({
     cookieColorScheme === "dark" || cookieColorScheme === "light"
       ? cookieColorScheme
       : headerColorScheme || "light";
+  // Nonce z proxy.ts (Content-Security-Policy) - bez něj CSP zablokuje
+  // vlastní <Script> tagy analytiky.
+  const nonce = requestHeaders.get("x-nonce") ?? undefined;
 
   return (
     <html
@@ -78,7 +81,7 @@ export default async function RootLayout({
     >
       <head />
       <body>
-        <Analytics />
+        <Analytics nonce={nonce} />
         <QueryProvider>
           <SessionProvider session={session}>
             <SettingsProvider>

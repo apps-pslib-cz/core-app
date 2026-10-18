@@ -63,6 +63,29 @@ export function normalizeMenuStructure(structure: MenuStructure): MenuGroup[] {
   return [];
 }
 
+// usePathname() vrací cestu i s jazykovým prefixem (/cs/dashboard/users),
+// href položek menu ho nemají - bez odříznutí by se aktivní položka nikdy
+// nezvýraznila. Jazyky odpovídají `locales` v src/proxy.ts.
+export function withoutLocale(pathname: string): string {
+  return pathname.replace(/^\/(cs|en)(?=\/|$)/, "") || "/";
+}
+
+// Aktivní je nejkonkrétnější položka, jejíž href odpovídá cestě nebo je
+// jejím prefixem (/dashboard/users/abc → "Uživatelé"). "/" se jako prefix
+// nepočítá, jinak by domovská položka svítila všude.
+export function findActiveHref(
+  structure: MenuStructure,
+  pathname: string,
+): string | undefined {
+  const path = withoutLocale(pathname);
+  const matches = (href?: string): href is string =>
+    !!href && (href === path || (href !== "/" && path.startsWith(`${href}/`)));
+  return normalizeMenuStructure(structure)
+    .flatMap((group) => group.items.map((item) => item.href))
+    .filter(matches)
+    .sort((a, b) => b.length - a.length)[0];
+}
+
 // Helper typy pro různé varianty menu
 export type FlatMenuItem = Omit<MenuItem, "children">; // Bez hierarchie
 export type NavigationMenuItem = Required<

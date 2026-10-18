@@ -3,7 +3,8 @@
  *
  * GET /api/v1/users/[id] - Get user details
  * - Admins: Can view all profiles with full data
- * - Users: Can view own profile with full data, others with limited data
+ * - Users with an app role: Can view own profile with full data, others with limited data
+ * - Users without any app role: Own profile only
  *
  * PUT /api/v1/users/[id] - Update user
  * - Admins: Can update all fields including roles and allowAutoUpdate
@@ -61,6 +62,12 @@ export async function GET(
   const isAdmin = RoleChecker.hasRole(currentUser, "admin");
   const isOwnProfile = currentUser.id === id;
   const canViewSensitiveData = isAdmin || isOwnProfile;
+
+  // Vlastní profil vždy, cizí jen s rolí appky - i bez citlivých polí by
+  // jinak kdokoli se školním účtem viděl role/active/isTestAccount.
+  if (!isOwnProfile && !RoleChecker.hasRoleOrHigher(currentUser, "member")) {
+    throw Forbidden("Nemáte oprávnění zobrazit profil tohoto uživatele.");
+  }
 
   const user = await prisma.user.findFirst({
     where: {

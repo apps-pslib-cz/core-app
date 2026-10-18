@@ -112,3 +112,31 @@ by zůstala bez tabulek (`evaluation-v1-app`, `SISTER-REPOS.md` S-5).
 
 Důsledek: appka postavená na šabloně dostane migraci `init` a na ni
 navazuje vlastními migracemi.
+
+## D-6 Bezpečnostní HTTP hlavičky a CSP s nonce (2026-10-18)
+
+Rozhodnutí: `next.config.ts` vypíná `X-Powered-By` a všem routám posílá
+`Referrer-Policy`, `Permissions-Policy` a `X-Content-Type-Options`.
+`src/proxy.ts` posílá na stránky `Content-Security-Policy` s nonce
+vygenerovaným pro každý request (`src/libs/csp.ts`). `script-src` je bez
+`'unsafe-inline'`, `style-src` ho mít musí kvůli Mantine. Nonce jde do
+layoutu přes `x-nonce` a dostávají ho `<Script>` tagy analytiky. Domény
+Umami/GA/Clarity se do `connect-src`/`img-src` přidávají, jen když je daná
+analytika v `.env` zapnutá. `public/.well-known/security.txt` (RFC 9116)
+a matcher proxy vyjímá `.well-known`, jinak by ho přesměroval pod `/cs`.
+
+Důvod: pentest školních systémů (2026-09, nálezy 6.3.3, 6.4.1–6.4.8,
+6.5.3; `evaluation-v1-app` `SISTER-REPOS.md` S-13, S-14). Oprava je
+převzatá z `projects-v1-app` se dvěma rozdíly. CSP je i v request hlavičce,
+jak to popisuje návod Next.js. `upgrade-insecure-requests` se posílá jen pro
+request, který přišel přes HTTPS (přímo nebo podle `x-forwarded-proto`).
+Na HTTP serveru totiž přepíše i interní navigaci a prefetch na
+`https://` a přechody mezi stránkami selžou (`ERR_SSL_PROTOCOL_ERROR`,
+ověřeno v prohlížeči proti `next start`).
+
+Důsledek: nonce funguje jen na dynamicky renderovaných stránkách. Root
+layout čte `headers()`, takže to v šabloně platí pro všechny. Nová
+externí služba (obrázky, API volané z prohlížeče, vložené skripty) musí
+přidat svou doménu do `buildCsp`, jinak ji prohlížeč zablokuje. Appka na
+šabloně si v `security.txt` nastaví svůj kontakt a jednou ročně obnoví
+`Expires`.

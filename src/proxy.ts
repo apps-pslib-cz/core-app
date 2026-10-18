@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { match as matchLocale } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
+import { buildCsp, generateNonce } from "@/libs/csp";
 
 // i18n konfigurace
 const locales = ["cs", "en"] as const;
@@ -22,6 +23,11 @@ function applyClientHintHeaders(response: NextResponse): NextResponse {
   response.headers.set("Accept-CH", "Sec-CH-Prefers-Color-Scheme");
   response.headers.append("Vary", "Sec-CH-Prefers-Color-Scheme");
 
+  return response;
+}
+
+function applySecurityHeaders(response: NextResponse, csp: string): NextResponse {
+  response.headers.set("Content-Security-Policy", csp);
   return response;
 }
 
@@ -81,12 +87,27 @@ export default function proxy(request: NextRequest) {
   const startTime = Date.now();
 
   const pathname = request.nextUrl.pathname;
+  const nonce = generateNonce();
+  const csp = buildCsp(nonce, {
+    isDev: process.env.NODE_ENV === "development",
+    // Za reverse proxy (IIS) vidí Node jen HTTP, skutečný protokol nese
+    // x-forwarded-proto.
+    isHttps:
+      (request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol)
+        .split(",")[0]
+        .trim()
+        .replace(/:$/, "") === "https",
+    env: process.env,
+  });
 
   // Přesměrování root cesty na výchozí lokale
   if (pathname === "/") {
     const locale = getLocale(request);
-    const response = applyClientHintHeaders(
-      NextResponse.redirect(new URL(`/${locale}`, request.url)),
+    const response = applySecurityHeaders(
+      applyClientHintHeaders(
+        NextResponse.redirect(new URL(`/${locale}`, request.url)),
+      ),
+      csp,
     );
 
     // Log redirect
@@ -112,7 +133,10 @@ export default function proxy(request: NextRequest) {
     const newUrl = new URL(`/${locale}${pathname}`, request.url);
     newUrl.search = request.nextUrl.search;
 
-    const response = applyClientHintHeaders(NextResponse.redirect(newUrl));
+    const response = applySecurityHeaders(
+      applyClientHintHeaders(NextResponse.redirect(newUrl)),
+      csp,
+    );
 
     // Log redirect
     const duration = Date.now() - startTime;
@@ -138,15 +162,25 @@ export default function proxy(request: NextRequest) {
   // params) can still set <html lang> correctly instead of hardcoding it.
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-locale", matchedLocale);
+  // CSP i v request hlavičce - Next.js z ní při renderu vytáhne nonce a dá
+  // ho na své skripty; `x-nonce` čte root layout pro vlastní <Script> tagy.
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
 
-  return applyClientHintHeaders(
-    NextResponse.next({ request: { headers: requestHeaders } }),
+  return applySecurityHeaders(
+    applyClientHintHeaders(
+      NextResponse.next({ request: { headers: requestHeaders } }),
+    ),
+    csp,
   );
 }
 
 export const config = {
   matcher: [
-    // Match all paths except API routes, static files, images, and Next.js internals
-    "/((?!api|_next/static|_next/image|favicon.ico|site.webmanifest|images|icons).*)",
+    // Match all paths except API routes, static files, images, Next.js
+    // internals and .well-known - security.txt musí být dostupný přesně na
+    // /.well-known/security.txt (RFC 9116), přesměrování na
+    // /cs/.well-known/... by skončilo 404.
+    "/((?!api|_next/static|_next/image|favicon.ico|site.webmanifest|images|icons|\\.well-known).*)",
   ],
 };

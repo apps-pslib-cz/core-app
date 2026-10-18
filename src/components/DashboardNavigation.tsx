@@ -8,7 +8,12 @@ import { usePathname } from "next/navigation";
 import styles from "./DashboardNavigation.module.css";
 import { useSession } from "next-auth/react";
 import { useDictionary } from "@/hooks/useDictionary";
-import { normalizeMenuStructure, type MenuStructure, type MenuItem } from "@/types/ui";
+import {
+  findActiveHref,
+  normalizeMenuStructure,
+  type MenuStructure,
+  type MenuItem,
+} from "@/types/ui";
 import { RoleChecker } from "@/types/roles";
 
 // Výchozí dashboard menu - appka postavená na téhle šabloně si ho doplní o
@@ -60,7 +65,7 @@ interface DashboardNavigationProps {
 export const DashboardNavigation: FC<DashboardNavigationProps> = ({
   onNavigate,
 }) => {
-  const pathname = usePathname();
+  const activeHref = findActiveHref(dashboardMenuStructure, usePathname() ?? "/");
   const { dictionary, loading } = useDictionary();
   const { data: session } = useSession();
   const userRoles = session?.user?.roles ?? [];
@@ -84,7 +89,7 @@ export const DashboardNavigation: FC<DashboardNavigationProps> = ({
   // Renderování jednotlivé menu položky (plain funkce, ne komponenta — nesmí se
   // volat jako JSX tag, jinak by React strom při každém renderu remountoval)
   const renderMenuItem = (item: MenuItem) => {
-    const isActive = pathname === item.href;
+    const isActive = !!item.href && item.href === activeHref;
     const isExternal = item.target === "_blank";
 
     const handleClick = () => {

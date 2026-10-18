@@ -25,6 +25,14 @@ být nastavená samostatná shadow DB. Lokální DB založená dřív přes
 `npx prisma migrate resolve --applied 20261012000000_init` (schéma už
 odpovídá, migrace se jen označí jako použitá).
 
+## Bezpečnostní hlavičky
+
+Stránky posílají CSP s nonce (`src/libs/csp.ts`, `src/proxy.ts`), ostatní
+bezpečnostní hlavičky nastavuje `next.config.ts` (viz `DECISIONS.md` D-6).
+Nová externí doména (obrázky, API volané z prohlížeče, skript) se musí
+přidat do `buildCsp`. Appka postavená na šabloně si upraví kontakt
+v `public/.well-known/security.txt` a před datem `Expires` ho obnoví.
+
 ## Role appky
 
 `src/types/roles.ts` definuje role appky (výchozí `admin`/`member`) a mapování OAuth claimů na role (`ROLE_CLAIMS`). Role appky nejsou pevně zadrátované do databáze - `User.roles` je `string[]`, takže přidání/odebrání role je jen úprava `roles.ts`, ne migrace schématu.

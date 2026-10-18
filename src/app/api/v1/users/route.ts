@@ -61,8 +61,13 @@ async function GET_impl(request: NextRequest) {
   const query: ValidatedUsersQuery = queryValidation.data;
   const queryAsRecord = query as unknown as Record<string, "true" | "false" | undefined>;
 
-  // Authentication using apiAuth (supports both session and JWT)
-  const { user: currentUser } = await requireAuthentication(request);
+  // Authentication using apiAuth (supports both session and JWT). Seznam
+  // uživatelů jen s rolí appky - jinak by si ho stáhl kdokoli se školním
+  // účtem, např. žák bez role. "member" je nejnižší role, splní ji i admin.
+  const { user: currentUser } = await requireAuthentication(request, {
+    requireRole: "member",
+    forbiddenMessage: "Nemáte oprávnění zobrazit seznam uživatelů.",
+  });
 
   // Check if user is admin (can see sensitive data like emails)
   const isAdmin = RoleChecker.hasRole(currentUser, "admin");

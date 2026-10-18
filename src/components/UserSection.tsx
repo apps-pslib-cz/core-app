@@ -82,7 +82,12 @@ export function ResponsiveUserSection({
   mobileBreakpoint = "sm",
   ...props
 }: UserSectionProps & { mobileBreakpoint?: string }) {
-  const isMobile = useMediaQuery(`(max-width: ${mobileBreakpoint})`);
+  // "sm" není platná CSS <length> - `(max-width: sm)` je neplatný media
+  // query, který nikdy neplatí, takže se mobilní varianta (jen avatar)
+  // nepoužila a jméno+e-mail na mobilu přetékaly přes obsah. Stejný převod
+  // má SignButton.tsx.
+  const breakpointPx = mobileBreakpoint === "sm" ? "768px" : mobileBreakpoint;
+  const isMobile = useMediaQuery(`(max-width: ${breakpointPx})`);
 
   return <UserSection {...props} variant={isMobile ? "mobile" : "desktop"} />;
 }
