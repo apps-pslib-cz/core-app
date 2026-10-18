@@ -84,8 +84,9 @@ export function buildCsp(
     // JS spustit nemůže.
     "style-src 'self' 'unsafe-inline'",
     // data: - base64 avatary (avatarDataUrl z GET /api/v1/users). Domény
-    // odpovídají images.remotePatterns v next.config.ts.
-    ["img-src 'self' data: blob: https://oauth.pslib.cz https://*.gravatar.com", ...analytics.img].join(" "),
+    // odpovídají images.remotePatterns v next.config.ts. `blob:` záměrně
+    // ne - vlastní avatar jde přímo z /api/v1/me/avatar (UserAvatar.tsx).
+    ["img-src 'self' data: https://oauth.pslib.cz https://*.gravatar.com", ...analytics.img].join(" "),
     "font-src 'self' data:",
     ["connect-src 'self'", ...analytics.connect].join(" "),
     "object-src 'none'",

@@ -36,7 +36,9 @@ export async function GET(
         status: 200,
         headers: {
           "Content-Type": "image/jpeg", // Assuming JPEG, could be made more flexible
-          "Cache-Control": "public, max-age=3600, s-maxage=3600", // Cache for 1 hour
+          // private: endpoint vyžaduje přihlášení, sdílená cache/proxy by ho
+          // jinak mohla podat i nepřihlášenému.
+          "Cache-Control": "private, max-age=3600",
           ETag: `"avatar-${user.id}"`,
         },
       });

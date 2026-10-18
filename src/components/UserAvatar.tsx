@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Avatar, Text, Box, Flex } from "@mantine/core";
 import { useSession } from "next-auth/react";
 
@@ -16,49 +16,20 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   onClick,
 }) => {
   const { data: session } = useSession();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(picture || null);
   const isCurrentSessionUser = Boolean(
     session?.user?.email && email && session.user.email === email,
   );
 
-  // Když se `picture`/`isCurrentSessionUser` změní, nastav avatarUrl na
-  // prop hned během renderu (ne v useEffect - React to pro "přizpůsob
-  // stav při změně propu" podporuje, viz dokumentace k useState), aby
-  // efekt níže musel synchronně volat setState jen uvnitř async
-  // .then/.catch, ne přímo ve svém těle.
-  const [prevKey, setPrevKey] = useState({ picture, isCurrentSessionUser });
-  if (
-    prevKey.picture !== picture ||
-    prevKey.isCurrentSessionUser !== isCurrentSessionUser
-  ) {
-    setPrevKey({ picture, isCurrentSessionUser });
-    setAvatarUrl(picture || null);
-  }
-
-  // Pro aktuálního přihlášeného uživatele zkus načíst avatar z nového API
-  useEffect(() => {
-    if (
-      isCurrentSessionUser &&
-      (!picture || picture.startsWith("https://oauth.pslib.cz"))
-    ) {
-      // Pokud je to aktuální uživatel a nemáme lokální URL, zkus načíst z API
-      fetch("/api/v1/me/avatar")
-        .then((response) => {
-          if (response.ok) {
-            return response.blob();
-          }
-          throw new Error("Avatar not found");
-        })
-        .then((blob) => {
-          const url = URL.createObjectURL(blob);
-          setAvatarUrl(url);
-        })
-        .catch(() => {
-          // Fallback na původní URL
-          setAvatarUrl(picture || null);
-        });
-    }
-  }, [isCurrentSessionUser, picture]);
+  // Přihlášenému uživateli bereme avatar z DB (/api/v1/me/avatar - stejný
+  // origin, <img> si session cookie pošle sám) místo přímé OAuth URL, která
+  // bývá nespolehlivá. Bez fetch + URL.createObjectURL nepotřebuje CSP
+  // img-src výjimku `blob:`. Když avatar chybí (404), Mantine Avatar sám
+  // ukáže iniciály.
+  const avatarSrc =
+    isCurrentSessionUser &&
+    (!picture || picture.startsWith("https://oauth.pslib.cz"))
+      ? "/api/v1/me/avatar"
+      : picture || undefined;
 
   const initials =
     (fullname ?? email ?? "?")
@@ -82,7 +53,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     >
       <Avatar
         visibleFrom="md"
-        src={avatarUrl ?? undefined}
+        src={avatarSrc}
         radius={40}
         size={40}
       >

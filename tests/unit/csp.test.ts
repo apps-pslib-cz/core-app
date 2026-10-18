@@ -30,6 +30,10 @@ describe("buildCsp", () => {
     expect(directive(csp, "object-src")).toBe("object-src 'none'");
   });
 
+  it("img-src bez blob: (avatar jde přímo z /api/v1/me/avatar)", () => {
+    expect(directive(buildCsp("abc"), "img-src")).not.toContain("blob:");
+  });
+
   it("bez analytiky povolí spojení jen na vlastní origin", () => {
     expect(directive(buildCsp("abc"), "connect-src")).toBe("connect-src 'self'");
   });

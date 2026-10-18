@@ -26,7 +26,9 @@ export async function GET(req: NextRequest) {
     return new NextResponse(avatarBuffer, {
       headers: {
         "Content-Type": mimeType,
-        "Cache-Control": "public, max-age=3600", // Cache na 1 hodinu
+        // private: obsah se liší podle přihlášeného uživatele (stejná URL pro
+        // všechny), sdílená cache/proxy by ho nesměla podat někomu jinému.
+        "Cache-Control": "private, max-age=3600",
         "Content-Length": avatarBuffer.length.toString(),
       },
     });
