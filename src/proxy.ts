@@ -180,7 +180,9 @@ export const config = {
     // Match all paths except API routes, static files, images, Next.js
     // internals and .well-known - security.txt musí být dostupný přesně na
     // /.well-known/security.txt (RFC 9116), přesměrování na
-    // /cs/.well-known/... by skončilo 404.
-    "/((?!api|_next/static|_next/image|favicon.ico|site.webmanifest|images|icons|\\.well-known).*)",
+    // /cs/.well-known/... by skončilo 404. Stejně manifest.webmanifest
+    // (src/app/manifest.ts) - přesměrovaný pod /cs/ by ho prohlížeč
+    // nenašel a appka by nešla nainstalovat.
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.webmanifest|images|icons|\\.well-known).*)",
   ],
 };

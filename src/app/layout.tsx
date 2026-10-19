@@ -42,6 +42,20 @@ export async function generateMetadata(): Promise<Metadata> {
       default: appConfig.name[locale],
     },
     description: appConfig.description[locale],
+    icons: {
+      icon: [
+        { url: "/icons/favicon.svg", type: "image/svg+xml" },
+        { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      ],
+      apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
+    // Safari na iOS nečte z manifestu všechno - název a režim "na plochu"
+    // potřebuje i jako meta tagy.
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: appConfig.pwa.shortName,
+    },
   };
 }
 

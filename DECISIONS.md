@@ -140,3 +140,24 @@ externí služba (obrázky, API volané z prohlížeče, vložené skripty) mus�
 přidat svou doménu do `buildCsp`, jinak ji prohlížeč zablokuje. Appka na
 šabloně si v `security.txt` nastaví svůj kontakt a jednou ročně obnoví
 `Expires`.
+
+## D-7 PWA jen jako instalovatelnost, bez service workeru (2026-10-19)
+
+Rozhodnutí: šablona má Web App Manifest (`src/app/manifest.ts`, z
+`appConfig`), ikony v `public/icons` (generuje
+`scripts/generate-pwa-icons.mjs`) a `appleWebApp` meta tagy pro iOS.
+Service worker, offline cache ani push notifikace nemá. Proxy vynechává
+`manifest.webmanifest` z jazykového přesměrování.
+
+Důvod: zadání uživatele - stačí instalovatelnost, notifikace ne
+(`projects-v1-app` má navíc Web Push, commit `ce2e34c`). Chrome ani
+Safari service worker pro instalaci nevyžadují, takže odpadne i výjimka
+`worker-src` v CSP. Proti `projects-v1-app` jsou maskable ikony
+samostatné soubory s bezpečným okrajem, protože Android maskable ikonu
+ořízne do kruhu.
+
+Důsledek: appka, která bude chtít push notifikace nebo offline režim,
+převezme `public/sw.js` a navazující kód z `projects-v1-app`. Musí pak
+přidat `sw.js` do výjimek matcheru v `src/proxy.ts` a `worker-src 'self'`
+do `buildCsp`. Instalovatelnost hlídá `tests/unit/manifest.test.ts`
+(ikony z manifestu musí existovat a mít deklarovanou velikost).

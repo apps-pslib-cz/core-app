@@ -33,6 +33,18 @@ Nová externí doména (obrázky, API volané z prohlížeče, skript) se musí
 přidat do `buildCsp`. Appka postavená na šabloně si upraví kontakt
 v `public/.well-known/security.txt` a před datem `Expires` ho obnoví.
 
+## Instalovatelná appka (PWA)
+
+Appku jde nainstalovat na plochu nebo do systému. Manifest generuje
+`src/app/manifest.ts` z `appConfig` (`name`, `description` a sekce `pwa`
+v `src/config/app.ts`). Service worker ani notifikace šablona nemá (viz
+`DECISIONS.md` D-7). Appka postavená na šabloně si upraví `appConfig.pwa`
+a ikony v `public/icons` přegeneruje ze svého loga:
+
+```
+node scripts/generate-pwa-icons.mjs cesta/k/logu.svg "#ffffff"
+```
+
 ## Role appky
 
 `src/types/roles.ts` definuje role appky (výchozí `admin`/`member`) a mapování OAuth claimů na role (`ROLE_CLAIMS`). Role appky nejsou pevně zadrátované do databáze - `User.roles` je `string[]`, takže přidání/odebrání role je jen úprava `roles.ts`, ne migrace schématu.

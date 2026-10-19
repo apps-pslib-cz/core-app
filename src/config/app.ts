@@ -29,6 +29,15 @@ export const appConfig = {
     en: "Template app with school OAuth login",
   },
 
+  // Instalovatelná PWA (src/app/manifest.ts) - bez service workeru a
+  // notifikací, jen "Přidat na plochu"/"Nainstalovat aplikaci". Ikony
+  // v public/icons generuje scripts/generate-pwa-icons.mjs z loga appky.
+  pwa: {
+    shortName: "core-app", // Změňte podle konkrétní aplikace (pod ikonou na ploše, max. ~12 znaků)
+    themeColor: "#1c7ed6", // barva titulku okna nainstalované appky
+    backgroundColor: "#ffffff", // pozadí úvodní obrazovky při spuštění
+  },
+
   // SEO Configuration
   seo: {
     // Default keywords for all pages
@@ -54,7 +63,7 @@ export const appConfig = {
     defaultImages: {
       openGraph: "/images/og-default.jpg",
       twitter: "/images/twitter-default.jpg",
-      favicon: "/favicon.ico",
+      favicon: "/icons/favicon.svg",
     },
 
     // Robots configuration

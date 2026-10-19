@@ -125,6 +125,17 @@ názvem cílové databáze.
 
 Vyžadují `pg_dump`/`pg_restore` na PATH (součást PostgreSQL instalace).
 
+## Ikony PWA (vývoj, ne server)
+
+```powershell
+node scripts/generate-pwa-icons.mjs [cesta/k/logu.svg] [barva-pozadí]
+```
+
+Z jednoho SVG loga (výchozí `public/images/logos/app2-light.svg`, pozadí
+`#ffffff`) vygeneruje do `public/icons` ikony pro manifest (192/512 px,
+`any` i `maskable` s bezpečným okrajem), `apple-touch-icon.png`
+a favicony. Výstup se commituje, za běhu appky se nic negeneruje.
+
 ---
 
 **Více informací:** [docs/deployment.md](../docs/deployment.md)
