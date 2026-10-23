@@ -78,7 +78,7 @@ netstat -ano | findstr :3100
 
 # Manuální spuštění (uvidíte chyby)
 cd C:\inetpub\core-app
-node server.js
+node node_modules\next\dist\bin\next start
 ```
 
 ### ACL Problémy

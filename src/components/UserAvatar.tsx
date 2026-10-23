@@ -1,5 +1,6 @@
 import React from "react";
 import { Avatar, Text, Box, Flex } from "@mantine/core";
+import { useMounted } from "@mantine/hooks";
 import { useSession } from "next-auth/react";
 
 type UserAvatarProps = {
@@ -16,6 +17,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   onClick,
 }) => {
   const { data: session } = useSession();
+  const mounted = useMounted();
   const isCurrentSessionUser = Boolean(
     session?.user?.email && email && session.user.email === email,
   );
@@ -24,7 +26,9 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   // origin, <img> si session cookie pošle sám) místo přímé OAuth URL, která
   // bývá nespolehlivá. Bez fetch + URL.createObjectURL nepotřebuje CSP
   // img-src výjimku `blob:`. Když avatar chybí (404), Mantine Avatar sám
-  // ukáže iniciály.
+  // ukáže iniciály - ale jen když se <img> vytvoří až po hydrataci. Ze
+  // serverového HTML by 404 přišla dřív, než React připojí onError, a
+  // zůstal by rozbitý obrázek (proto `mounted`).
   const avatarSrc =
     isCurrentSessionUser &&
     (!picture || picture.startsWith("https://oauth.pslib.cz"))
@@ -53,7 +57,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     >
       <Avatar
         visibleFrom="md"
-        src={avatarSrc}
+        src={mounted ? avatarSrc : undefined}
         radius={40}
         size={40}
       >

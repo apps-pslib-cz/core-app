@@ -195,8 +195,10 @@ const UsersPage = () => {
       <Box
         style={{
           display: "flex",
+          flexWrap: "wrap",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-start",
+          gap: "0.75rem",
           marginBottom: "1rem",
         }}
       >

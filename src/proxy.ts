@@ -103,10 +103,11 @@ export default function proxy(request: NextRequest) {
   // Přesměrování root cesty na výchozí lokale
   if (pathname === "/") {
     const locale = getLocale(request);
+    // Query (např. ?callbackUrl) musí přesměrování přežít, jinak se ztratí.
+    const target = new URL(`/${locale}`, request.url);
+    target.search = request.nextUrl.search;
     const response = applySecurityHeaders(
-      applyClientHintHeaders(
-        NextResponse.redirect(new URL(`/${locale}`, request.url)),
-      ),
+      applyClientHintHeaders(NextResponse.redirect(target)),
       csp,
     );
 

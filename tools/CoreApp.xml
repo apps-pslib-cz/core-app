@@ -9,7 +9,9 @@
   <name>CoreApp</name>
   <description>Next.js app - core-app šablona na portu 3100</description>
   <executable>C:\Program Files\nodejs\node.exe</executable>
-  <arguments>server.js</arguments>
+  <!-- Oficiální `next start` (načte .env.production, port z PORT). Šablona
+       nemá vlastní server.js ani output: "standalone". -->
+  <arguments>node_modules\next\dist\bin\next start</arguments>
   <workingdirectory>C:\inetpub\core-app</workingdirectory>
 
   <env name="NODE_ENV" value="production"/>

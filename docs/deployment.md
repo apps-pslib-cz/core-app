@@ -202,8 +202,12 @@ git clone https://github.com/<org>/<repo>.git .
 ### 2. Instalace závislostí
 
 ```powershell
-npm ci --omit=dev
+npm ci
 ```
+
+Všechny závislosti, ne `--omit=dev`: build potřebuje i vývojové
+(`prisma`, `typescript`, `postcss-preset-mantine`) a vygenerovaný klient
+Prisma za běhu `@prisma/client`, který je v `devDependencies`.
 
 ### 3. Nastavení Prisma a migrace databáze
 
@@ -271,7 +275,7 @@ Viz `scripts/README.md` pro detailní popis kroků a volby
 
 # Zkuste spustit Next.js manuálně (uvidíte chyby přímo)
 cd C:\inetpub\core-app
-node server.js
+node node_modules\next\dist\bin\next start
 
 # ACL problémy
 icacls "C:\inetpub\core-app" /grant "BUILTIN\Users:(OI)(CI)M" /T
