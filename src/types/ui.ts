@@ -70,6 +70,15 @@ export function withoutLocale(pathname: string): string {
   return pathname.replace(/^\/(cs|en)(?=\/|$)/, "") || "/";
 }
 
+// Odkazy v menu jsou bez jazyka ("/dashboard/users"). Bez prefixu by je
+// proxy přesměrovala podle cookie/Accept-Language - anglicky prohlížející
+// uživatel by po kliknutí skončil v češtině. Externí a relativní odkazy
+// nechává beze změny.
+export function localizedHref(href: string, lang: string | undefined): string {
+  if (!lang || !href.startsWith("/") || href.startsWith("//")) return href;
+  return href === "/" ? `/${lang}` : `/${lang}${href}`;
+}
+
 // Aktivní je nejkonkrétnější položka, jejíž href odpovídá cestě nebo je
 // jejím prefixem (/dashboard/users/abc → "Uživatelé"). "/" se jako prefix
 // nepočítá, jinak by domovská položka svítila všude.

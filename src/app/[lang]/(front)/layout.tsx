@@ -1,21 +1,13 @@
 "use client";
 
 import { FC, PropsWithChildren } from "react";
-import { BaseLayout } from "@/components/BaseLayout";
+import { AppLayout } from "@/components/AppLayout";
 
 /**
- * Společný layout pro všechny veřejné/přední stránky appky (domovská
- * stránka, /about, /help, /contact, /privacy, ...) - dává jim appshell
- * s hlavičkou/patičkou (BaseLayout), takže je nemusí řešit každá stránka
- * samostatně. Admin sekce má vlastní layout
- * (src/app/[lang]/dashboard/layout.tsx) s postranním menu místo tohoto.
- *
- * Appka postavená na téhle šabloně sem obvykle doplní horizontální
- * navigaci (navigationType="horizontal" + navigationContent) - zatím je
- * prázdná, žádné front-end sekce kromě /dashboard v šabloně nejsou.
+ * Společný layout veřejných stránek (domovská stránka, /about, /help,
+ * /contact, /privacy, ...) - hlavička s hlavním menu, patička. Položky
+ * hlavního menu jsou v src/components/MainNavigation.tsx.
  */
-const PublicLayout: FC<PropsWithChildren> = ({ children }) => {
-  return <BaseLayout>{children}</BaseLayout>;
-};
+const PublicLayout: FC<PropsWithChildren> = ({ children }) => <AppLayout>{children}</AppLayout>;
 
 export default PublicLayout;

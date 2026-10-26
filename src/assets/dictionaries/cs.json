@@ -173,7 +173,7 @@
   },
   "dashboard": {
     "menu": {
-      "home": "Domů",
+      "overview": "Přehled",
       "users": "Uživatelé",
       "logs": "Logy"
     }
@@ -306,5 +306,11 @@
       "yes": "Ano",
       "no": "Ne"
     }
+  },
+  "nav": {
+    "main": "Hlavní menu",
+    "drawerTitle": "Menu",
+    "home": "Domů",
+    "administration": "Administrace"
   }
 }

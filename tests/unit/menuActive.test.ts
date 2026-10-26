@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findActiveHref, withoutLocale, type MenuStructure } from "@/types/ui";
+import { findActiveHref, localizedHref, withoutLocale, type MenuStructure } from "@/types/ui";
 
 describe("withoutLocale", () => {
   it("odřízne jazykový prefix", () => {
@@ -43,5 +43,18 @@ describe("findActiveHref", () => {
 
   it("nezaměňuje položku za prefix jiného slova", () => {
     expect(findActiveHref(menu, "/cs/dashboard/usersettings")).toBe("/dashboard");
+  });
+});
+
+describe("localizedHref", () => {
+  it("doplní jazyk k interní cestě, aby menu nepřepínalo jazyk", () => {
+    expect(localizedHref("/dashboard/users", "en")).toBe("/en/dashboard/users");
+    expect(localizedHref("/", "en")).toBe("/en");
+  });
+
+  it("externí, protokolově relativní a cesty bez jazyka nechá být", () => {
+    expect(localizedHref("https://example.cz/x", "cs")).toBe("https://example.cz/x");
+    expect(localizedHref("//cdn.example.cz/x", "cs")).toBe("//cdn.example.cz/x");
+    expect(localizedHref("/dashboard", undefined)).toBe("/dashboard");
   });
 });

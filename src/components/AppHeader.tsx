@@ -1,7 +1,7 @@
 "use client";
 
 import { AppShell, Group } from "@mantine/core";
-import { ReactNode, CSSProperties } from "react";
+import { ReactNode, CSSProperties, Ref } from "react";
 
 interface AppHeaderProps {
   height?: number;
@@ -10,6 +10,8 @@ interface AppHeaderProps {
   rightSection?: ReactNode;
   style?: CSSProperties;
   className?: string;
+  /** Řádek hlavičky - BaseLayout z něj měří dostupnou šířku (headerFit). */
+  rowRef?: Ref<HTMLDivElement>;
 }
 
 export function AppHeader({
@@ -19,10 +21,12 @@ export function AppHeader({
   rightSection,
   style,
   className,
+  rowRef,
 }: AppHeaderProps) {
   return (
     <AppShell.Header h={height} style={style} className={className}>
-      <Group justify="space-between" h="100%" px="md">
+      {/* Větší okraj než obsah - logo dál od hrany (jako projects-v1-app). */}
+      <Group ref={rowRef} justify="space-between" h="100%" px={{ base: "md", sm: "xl" }} wrap="nowrap">
         {leftSection && <Group>{leftSection}</Group>}
         {navigationItems && (
           <Group gap="sm" style={{ flex: 1, justifyContent: "center" }}>

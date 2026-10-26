@@ -1,23 +1,18 @@
 "use client";
 
 import { FC, PropsWithChildren } from "react";
-import { BaseLayout } from "@/components/BaseLayout";
+import { AppLayout } from "@/components/AppLayout";
 import { DashboardNavigation } from "@/components/DashboardNavigation";
 
-const DashboardLayoutClient: FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <BaseLayout
-      navigationType="sidebar"
-      navigationContent={<DashboardNavigation />}
-      mobileNavigationContent={(closeMobileNav) => (
-        <DashboardNavigation onNavigate={closeMobileNav} />
-      )}
-      sidebarWidth={250}
-      drawerTitle="Dashboard Menu"
-    >
-      {children}
-    </BaseLayout>
-  );
-};
+/** Administrace: hlavní menu v hlavičce + postranní menu podsekcí. */
+const DashboardLayoutClient: FC<PropsWithChildren> = ({ children }) => (
+  // Na celou šířku (tabulky, logy) - bez zužujícího kontejneru.
+  <AppLayout
+    contained={false}
+    sidebar={(onNavigate) => <DashboardNavigation onNavigate={onNavigate} />}
+  >
+    {children}
+  </AppLayout>
+);
 
 export default DashboardLayoutClient;

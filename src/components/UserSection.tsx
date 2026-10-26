@@ -47,7 +47,7 @@ export function UserSection({
             <IconSettings size={16} />
           </ActionIcon>
         )}
-        {showSignButton && <SignButton variant="outline" size="sm" />}
+        {showSignButton && <SignButton variant="outline" size="sm" compact />}
       </Group>
     );
   }
@@ -72,7 +72,7 @@ export function UserSection({
           <IconSettings size={20} />
         </ActionIcon>
       )}
-      {showSignButton && <SignButton variant="outline" />}
+      {showSignButton && <SignButton variant="outline" compact={false} />}
     </Group>
   );
 }
@@ -80,6 +80,7 @@ export function UserSection({
 // Responzivní wrapper, který automaticky přepíná mezi desktop/mobile variantami
 export function ResponsiveUserSection({
   mobileBreakpoint = "sm",
+  variant,
   ...props
 }: UserSectionProps & { mobileBreakpoint?: string }) {
   // "sm" není platná CSS <length> - `(max-width: sm)` je neplatný media
@@ -89,5 +90,6 @@ export function ResponsiveUserSection({
   const breakpointPx = mobileBreakpoint === "sm" ? "768px" : mobileBreakpoint;
   const isMobile = useMediaQuery(`(max-width: ${breakpointPx})`);
 
-  return <UserSection {...props} variant={isMobile ? "mobile" : "desktop"} />;
+  // `variant` zvenku (BaseLayout podle šířky obsahu, headerFit) má přednost.
+  return <UserSection {...props} variant={variant ?? (isMobile ? "mobile" : "desktop")} />;
 }

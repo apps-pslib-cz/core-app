@@ -161,3 +161,30 @@ převezme `public/sw.js` a navazující kód z `projects-v1-app`. Musí pak
 přidat `sw.js` do výjimek matcheru v `src/proxy.ts` a `worker-src 'self'`
 do `buildCsp`. Instalovatelnost hlídá `tests/unit/manifest.test.ts`
 (ikony z manifestu musí existovat a mít deklarovanou velikost).
+
+## D-8 Společný layout s hlavním menu a hlavička zhušťovaná podle šířky (2026-10-26)
+
+Rozhodnutí: veřejná část i administrace používají `AppLayout`
+(`src/components/AppLayout.tsx`). Hlavní menu (`MainNavigation`) je vždy
+v hlavičce a položky se ukazují podle role. Administrace k němu přidá
+postranní menu podsekcí (`DashboardNavigation`), skupina „Domů“ z něj
+odpadla. Hlavička se zhušťuje podle naměřené šířky obsahu
+(`src/libs/headerFit.ts`: plná → kompaktní uživatelská sekce → šuplík), ne
+podle pevného breakpointu. Šuplík obsahuje hlavní menu a pod ním podsekce,
+pokud postranní menu není vidět. Postranní menu se ukazuje od 48em
+(Mantine `sm`), stejně jako končí mobil. Odkazy v obou menu nesou jazyk
+aktuální stránky (`localizedHref`).
+
+Důvod: převzato z `evaluation-v1-app` (`SISTER-REPOS.md` S-24, S-25,
+S-27). Šablona dřív neměla hlavní menu a mezi 768 a 992 px byly podsekce
+administrace nedostupné (postranní menu skryté od `md`, šuplík až pod
+768 px). Při ověření se našly dvě další chyby (S-28, S-29). S krátkým menu
+šablony zůstávala hlavička pod 768 px bez burgeru, takže podsekce zase
+nebyly dostupné. Odkazy menu bez jazyka přepínaly anglicky prohlížejícího
+uživatele zpět do češtiny.
+
+Důsledek: appka postavená na šabloně přidá své sekce do `ITEMS`
+v `MainNavigation.tsx` (popisky do `nav` ve slovnících) a podsekce do
+`dashboardMenuStructure`. Vlastní sekce s podstránkami použije
+`<AppLayout sidebar={...}>`. Na hlavičce nic dalšího nastavovat nemusí,
+zhuštění se přizpůsobí délce menu i jménu uživatele.

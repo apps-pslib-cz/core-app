@@ -29,7 +29,9 @@ výchozí `admin`/`member` s hierarchií `admin ⊇ member`:
    (`/api/auth/callback/duende-identity-server6`). Appka ho najde/založí
    podle `sub`/e-mailu a přidělí roli podle OAuth claimů (`ROLE_CLAIMS`).
 2. **Veřejná část** (`(front)`) — stránky dostupné bez role (konkrétní
-   appka si doplní vlastní obsah; šablona má jen kostru layoutu).
+   appka si doplní vlastní obsah; šablona má jen kostru layoutu). Hlavní
+   menu v hlavičce (`MainNavigation`) je společné s administrací, položky
+   se ukazují podle role.
 3. **Administrace** (`/dashboard`, role `admin`) — správa uživatelů
    (seznam/detail/vytvoření/úprava/smazání, hromadná synchronizace
    avatarů a aktivity z OAuth serveru), nastavení appky (jazyk, barevné

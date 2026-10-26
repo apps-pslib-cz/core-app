@@ -8,6 +8,11 @@ import { useDictionary } from "@/hooks/useDictionary";
 
 type SignButtonBaseProps = {
   breakpoint?: string;
+  /**
+   * Ikonové tlačítko místo tlačítka s textem - přebije vlastní media query,
+   * když o zhuštění rozhoduje hlavička podle šířky obsahu (headerFit).
+   */
+  compact?: boolean;
   onSignIn?: () => void;
   onSignOut?: () => void;
 };
@@ -16,15 +21,17 @@ type SignButtonProps = SignButtonBaseProps & Record<string, unknown>;
 
 const SignButton: React.FC<SignButtonProps> = ({
   breakpoint = "sm",
+  compact,
   onSignIn,
   onSignOut,
   ...rest
 }) => {
   const { status } = useSession();
   const { dictionary } = useDictionary();
-  const isMobile = useMediaQuery(
+  const narrow = useMediaQuery(
     `(max-width: ${breakpoint === "sm" ? "768px" : breakpoint})`,
   );
+  const isMobile = compact ?? narrow;
   const isAuthenticated = status === "authenticated";
   const isLoading = status === "loading";
 

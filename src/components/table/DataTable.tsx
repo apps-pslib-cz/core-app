@@ -261,7 +261,13 @@ export function DataTable<TData extends AppRowData>({
         const requestChanged = prevRequestRef.current !== requestKey;
 
         if (requestChanged && canPushRef.current) {
-          const newParams = new URLSearchParams();
+          // Jen vlastní klíče tabulky (prefix urlKey) - ostatní parametry
+          // stránky (přepínač nad tabulkou, druhá tabulka s jiným urlKey)
+          // musí zůstat.
+          const newParams = new URLSearchParams(window.location.search);
+          [...newParams.keys()]
+            .filter((key) => key.startsWith(`${urlKey}_`))
+            .forEach((key) => newParams.delete(key));
 
           // Sorting
           if (request.sorting.length > 0) {

@@ -2,14 +2,15 @@
 
 import { NavLink, Divider, Text } from "@mantine/core";
 import { FC } from "react";
-import { IconHome, IconUsers, IconFileAnalytics } from "@tabler/icons-react";
+import { IconLayoutDashboard, IconUsers, IconFileAnalytics } from "@tabler/icons-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import styles from "./DashboardNavigation.module.css";
 import { useSession } from "next-auth/react";
 import { useDictionary } from "@/hooks/useDictionary";
 import {
   findActiveHref,
+  localizedHref,
   normalizeMenuStructure,
   type MenuStructure,
   type MenuItem,
@@ -19,22 +20,18 @@ import { RoleChecker } from "@/types/roles";
 // Výchozí dashboard menu - appka postavená na téhle šabloně si ho doplní o
 // vlastní položky (zkopírujte vzor items/group níž, `requiredRole` je
 // nepovinné - bez něj je položka vidět každému, kdo se do /dashboard dostane).
+// Skupina "Domů" tu není - zpět vede hlavní menu v hlavičce
+// (MainNavigation).
 export const dashboardMenuStructure: MenuStructure = [
-  {
-    id: "home",
-    items: [
-      {
-        id: "home",
-        textKey: "dashboard.menu.home",
-        icon: <IconHome size={16} />,
-        href: "/",
-      },
-    ],
-    divider: true,
-  },
   {
     id: "main",
     items: [
+      {
+        id: "overview",
+        textKey: "dashboard.menu.overview",
+        icon: <IconLayoutDashboard size={16} />,
+        href: "/dashboard",
+      },
       {
         id: "users",
         textKey: "dashboard.menu.users",
@@ -66,6 +63,7 @@ export const DashboardNavigation: FC<DashboardNavigationProps> = ({
   onNavigate,
 }) => {
   const activeHref = findActiveHref(dashboardMenuStructure, usePathname() ?? "/");
+  const lang = useParams()?.lang as string | undefined;
   const { dictionary, loading } = useDictionary();
   const { data: session } = useSession();
   const userRoles = session?.user?.roles ?? [];
@@ -74,7 +72,7 @@ export const DashboardNavigation: FC<DashboardNavigationProps> = ({
   const getLocalizedText = (textKey: string): string => {
     if (loading || !dictionary) return textKey;
 
-    // Navigujeme objektem podle tečkové notace (např. "dashboard.menu.home")
+    // Navigujeme objektem podle tečkové notace (např. "dashboard.menu.users")
     const keys = textKey.split(".");
     let result: unknown = dictionary;
 
@@ -120,7 +118,7 @@ export const DashboardNavigation: FC<DashboardNavigationProps> = ({
       return (
         <NavLink
           key={item.id}
-          href={item.href}
+          href={localizedHref(item.href, lang)}
           label={getLocalizedText(item.textKey)}
           leftSection={item.icon}
           active={isActive}

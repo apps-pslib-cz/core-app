@@ -173,7 +173,7 @@
   },
   "dashboard": {
     "menu": {
-      "home": "Home",
+      "overview": "Overview",
       "users": "Users",
       "logs": "Logs"
     }
@@ -306,5 +306,11 @@
       "yes": "Yes",
       "no": "No"
     }
+  },
+  "nav": {
+    "main": "Main menu",
+    "drawerTitle": "Menu",
+    "home": "Home",
+    "administration": "Administration"
   }
 }
