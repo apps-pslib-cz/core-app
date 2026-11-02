@@ -1,0 +1,3 @@
+# LOGS.md je jen přidávaný log - souběžné řádky z různých větví se při merge
+# spojí bez konfliktu (DECISIONS D-10, D-11).
+LOGS.md merge=union

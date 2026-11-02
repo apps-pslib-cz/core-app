@@ -5,9 +5,7 @@ dnes skutečně obsahuje — ne cílový design konkrétní budoucí appky. Vzni
 podle metodiky v `dev_notes/agentic-engineering.md`.
 
 > **Appka postavená na téhle šabloně nahradí celý tento soubor vlastním
-> `SPEC.md`** popisujícím svou vlastní doménu (jako `projects-v1-app`, ze
-> kterého je šablona vytěžená, má svůj vlastní `SPEC.md` pro dlouhodobé
-> práce). Co zůstává z šablony nezměněné (auth, role, správa uživatelů),
+> `SPEC.md`** popisujícím svou vlastní doménu. Co zůstává z šablony nezměněné (auth, role, správa uživatelů),
 > stačí v novém `SPEC.md` jen odkazem zmínit, ne znovu popisovat.
 
 ## 1. Účel
@@ -18,7 +16,7 @@ Server) a konzistentním UI (Mantine). Řeší to, co by jinak každá nová
 appka stavěla znovu: přihlášení, obecný model rolí, administraci
 uživatelů, nastavení appky per uživatel, chybové stránky, i18n (cs/en).
 Nejde o produkt pro koncového uživatele samotný — je to startovní bod pro
-další appky (první reálné použití: migrace `evaluation-v1`).
+další appky (seznam v `SISTER-REPOS.md`).
 Rodičovský projekt současně poskytuje obecnou metodiku a verzovanou agentní
 infrastrukturu pro Claude Code, GitHub Copilot a Codex.
 
@@ -85,6 +83,17 @@ nejsou součástí tohoto souboru, patří do nového `SPEC.md`.
   chybně zadané stavy.
 - [x] AC-8: Nativní hook konfigurace všech tří nástrojů volají stejný
   skript; logovací formát neukládá prompty ani výstupy nástrojů.
+- [x] AC-9: Přepnutí větve, `pull` ani `merge` nezapíše do `LOGS.md`
+  falešný přechod stavu; předchozí stav úkolu se bere z posledního commitu
+  větve. Souběžné zápisy do `LOGS.md` ve dvou větvích jdou sloučit bez
+  konfliktu.
+- [x] AC-10: Metodika (`AGENTS.md`, `dev_notes/agentic-engineering.md`,
+  skill `agentic-engineering`) popisuje práci ve větvi úkolu: agent
+  commituje jen do ní, do hlavní větve slučuje až po testech a souhlasu
+  uživatele; žádný dokument tomu neodporuje.
+- [x] AC-11: Chyby sdílené s odvozenými repozitáři se evidují na jednom
+  místě (`SISTER-REPOS.md` v tomto repu); živé dokumenty, skills a kód
+  šablony neodkazují na konkrétní dřívější projekty.
 
 ## 6. Mimo rozsah
 

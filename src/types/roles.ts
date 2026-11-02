@@ -3,8 +3,7 @@
  *
  * Obecný model rolí - appka si role definuje sama jako konstanty (APP_ROLES),
  * uloženy jsou jako string[] na User.roles (Postgres array, ne pevný enum -
- * nová role tedy nevyžaduje migraci schématu). Nahrazuje dřívější pevnou
- * trojici admin/evaluator/author z projects-v1-app.
+ * nová role tedy nevyžaduje migraci schématu).
  */
 
 // Role této appky, od nejvyšší výsady k nejnižší. Upravte podle potřeby -

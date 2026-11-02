@@ -7,6 +7,7 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
@@ -89,6 +90,27 @@ function parseTaskStatuses(content) {
   return statuses;
 }
 
+// Stav úkolů v posledním commitu aktuální větve, nebo null mimo git
+// (případně když TASKS.md v HEAD není nebo nejde přečíst). Přepnutí větve,
+// pull ani merge pak nezapíšou falešný přechod: pracovní kopie se rovná
+// HEAD, takže se nic nezměnilo.
+function readCommittedStatuses(root) {
+  let content;
+  try {
+    content = execFileSync("git", ["-C", root, "show", "HEAD:./TASKS.md"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    });
+  } catch {
+    return null;
+  }
+  try {
+    return parseTaskStatuses(content);
+  } catch {
+    return null;
+  }
+}
+
 function readLatestStatuses(logPath) {
   const latestStatuses = new Map();
   if (!existsSync(logPath)) {
@@ -143,6 +165,7 @@ async function recordTaskStatusChanges({ root, source }) {
   }
 
   const currentStatuses = parseTaskStatuses(readFileSync(tasksPath, "utf8"));
+  const committedStatuses = readCommittedStatuses(root);
   mkdirSync(root, { recursive: true });
   await acquireLock(lockPath);
 
@@ -156,10 +179,23 @@ async function recordTaskStatusChanges({ root, source }) {
     const entries = [];
 
     for (const [taskId, currentStatus] of currentStatuses) {
-      const previousStatus = latestStatuses.get(taskId) ?? "new";
-      if (previousStatus !== currentStatus) {
-        entries.push(`| ${timestamp} | ${taskId} | ${previousStatus} | ${currentStatus} | ${source} |`);
+      const loggedStatus = latestStatuses.get(taskId);
+      let previousStatus;
+      if (committedStatuses) {
+        // V gitu: zapisuje se jen necommitnutá změna proti HEAD, předchozí
+        // stav je ten z posledního commitu větve.
+        const committedStatus = committedStatuses.get(taskId);
+        if (committedStatus === currentStatus || loggedStatus === currentStatus) {
+          continue;
+        }
+        previousStatus = committedStatus ?? "new";
+      } else {
+        previousStatus = loggedStatus ?? "new";
+        if (previousStatus === currentStatus) {
+          continue;
+        }
       }
+      entries.push(`| ${timestamp} | ${taskId} | ${previousStatus} | ${currentStatus} | ${source} |`);
     }
 
     if (entries.length > 0) {

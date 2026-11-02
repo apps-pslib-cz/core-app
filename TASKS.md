@@ -20,3 +20,18 @@ Hotovo (2026-11-02): IDEA-001, AC-5–AC-8; `npx vitest run` (44 testů),
 `npx tsc --noEmit -p .`, `npm run lint`, `npm run agent:skills:check` a
 `node --check` obou Node skriptů prošly.
 Stav: [x] hotovo
+
+## T-2
+Hotovo (2026-11-03): IDEA-002, AC-9–AC-11, D-11. Ve větvi
+`task/T-2-vetve-a-sister-repos`; odvozené repozitáře
+(`projects-v1-app` T-53, `internship-v5-app` T-19, `evaluation-v1-app`
+T-53) ve vlastních větvích téhož jména. AC-9: unit testy logu v gitu
+(přepnutí větve/merge bez zápisu, necommitnutý přechod jednou,
+`merge=union` bez konfliktu; ručně ověřeno, že bez `merge=union` merge
+konfliktuje). AC-10: `AGENTS.md`, metodika 4.1, skill, `CONVENTIONS.md`.
+AC-11: `SISTER-REPOS.md` + test, že názvy odvozených repozitářů jinde
+nejsou (ručně ověřeno, že vložený odkaz test shodí). `npx tsc`,
+`npx vitest run` (49 testů), `npm run lint`, `npm run agent:skills:check`;
+v odvozených repech tsc a vitest. Neověřeno: Codex/Copilot hooky po
+změně skriptu.
+Stav: [x] hotovo

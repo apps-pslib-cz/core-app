@@ -139,7 +139,7 @@ export const BaseLayout: FC<BaseLayoutProps> = ({
         leftSection={defaultLeftSection}
         navigationItems={headerNavigation}
         rightSection={headerRightSection}
-        // Poloprůhledná s rozostřením jako projects-v1-app; barva
+        // Poloprůhledná s rozostřením; barva
         // z tématu, takže funguje i v tmavém režimu.
         style={
           headerStyle ?? {

@@ -15,6 +15,13 @@ Use this workflow for non-trivial work in this parent project and projects built
 4. For a non-trivial change, present the affected files, approach, risks, checks, and cheapest falsifiable check before editing.
 5. Implement only the approved scope. Request approval before adding dependencies, changing data models, or changing architecture.
 
+## Task branch
+
+1. When working on a task on your own, start from a clean working tree on the current main branch (`main`/`master`) and create `task/T-N-short-name`. Do not carry over someone else's uncommitted changes; ask instead.
+2. Commit to the task branch in logical steps; commit `LOGS.md` together with `TASKS.md`. Never commit directly to the main branch.
+3. After checks pass and `TASKS.md` holds the evidence, hand off: summary, branch name, `git log --oneline <main>..HEAD`, and a request for review.
+4. Merge into the main branch only after the user explicitly approves (`git merge --no-ff`), rerun the checks, then delete the branch. Without approval, ask the user and give the exact commands. Never push or rewrite history without explicit permission.
+
 ## Project memory
 
 - `IDEAS.md` stores stable idea IDs with `Nazev`, `Navrh`, `Stav`, and `Vazby`. Preserve deferred and rejected ideas.

@@ -2,7 +2,7 @@
 
 **Metodika řízeného vývoje softwaru s AI agenty pro výuku i praxi**
 
-Verze 4.0 (přijata jako platná metodika projektu `projects-v1-app` 1. 10. 2026) · Nástroje ověřeny k 29. 9. 2026 (viz Příloha A) · Text z 30. 9. 2026
+Verze 4.1 (platná metodika této šablony a projektů z ní odvozených) · Nástroje ověřeny k 29. 9. 2026 (viz Příloha A) · Text z 3. 11. 2026
 
 ## Jak tento dokument číst
 
@@ -280,6 +280,13 @@ generován hookem, neupravuje se ručně a nesmí se považovat za souhlas člov
 důkaz splnění AC ani náhradu tasku. Ukládej jen nezbytná metadata; neukládej
 prompty, přepisy konverzací, výstupy nástrojů ani osobní údaje.
 
+Při práci ve větvích (kapitola 7) musí log rozlišit skutečnou změnu stavu od
+přepnutí větve: předchozí stav se bere z posledního commitu větve a zapisuje
+se jen necommitnutá změna proti němu, takže `checkout`, `pull` ani `merge`
+falešný přechod nevytvoří. Log, do kterého připisují řádky různé větve, má
+v `.gitattributes` slučování `merge=union`, jinak skončí každý merge
+konfliktem.
+
 ### 4.6 DECISIONS.md
 
 Zachycuje důležitá rozhodnutí a jejich důvod: proč zvolený datový formát, proč je validace v určité vrstvě, proč projekt používá určitou knihovnu. Bez záznamu agent (i kolega nebo budoucí já) často po čase naváže opačným směrem, protože důvod původní volby nikde nezůstal.
@@ -365,7 +372,7 @@ Agent s přístupem k terminálu, souborům, síti nebo vzdáleným službám m�
 - **Nevratné, externí nebo finančně dopadové akce** (mazání dat, nasazení, publikace, změna oprávnění, placené služby) schvaluje vždy člověk.
 - **Externí obsah je nedůvěryhodný vstup.** Text z webu, issue, dokumentace, logu nebo cizího kódu může obsahovat pokyny, které agenta vychýlí z úkolu (*prompt injection*). Agent ho zpracovává jako data, instrukce z něj bez potvrzení nepřebírá.
 - **Tajné údaje, osobní a produkční data** nepatří do promptů, repozitáře ani testovacích ukázek.
-- **Práce jde vrátit.** Agent pracuje ve větvi, změny se ukládají po malých commitech, aby šla špatná změna snadno zahodit.
+- **Práce jde vrátit.** Agent pracuje ve vlastní větvi úkolu a ukládá do ní změny po malých commitech, aby šla špatná změna snadno zahodit. Do hlavní větve se nic necommituje přímo; sloučení je rozhodnutí člověka (kapitola 7).
 - **Nové závislosti, síťová oprávnění a změny veřejných rozhraní** se zdůvodňují a zapisují.
 
 ### Třídy autonomie podle rizika
@@ -397,10 +404,11 @@ Následující postup je výchozí pro netriviální úkol. U drobných změn je
 1. **Zadání, riziko a specifikace.** Urči, co se má změnit a co ne, a zvol třídu rizika (kapitola 6). Nech agenta, ať tě vyzpovídá, a společně sestavte `SPEC.md`. Člověk ji schvaluje. Než agent začne, shrne vlastními slovy, co pochopil (kapitola 9).
 2. **Plán** (jen u netriviální změny). Agent zkoumá a navrhuje, aniž by cokoli měnil; člověk plán upraví a schválí (`PLAN.md`).
 3. **Rozpad na úkoly** (`TASKS.md`). Malé kroky, každý s ověřitelnou podmínkou hotovo.
-4. **Implementace po úkolech.** Po každém úkolu se spustí kontrola. Agent předkládá **důkaz** (výstup testů, spuštěný příkaz), ne pouhé tvrzení, že je hotovo. Rozsah se nerozšiřuje automaticky: agent rozšíření navrhne a člověk rozhodne.
+4. **Implementace po úkolech, každý ve své větvi.** Agent pracující na úkolu samostatně založí z aktuální hlavní větve větev úkolu (např. `task/T-3-validace-terminu`) a commituje do ní po logických krocích. Po každém úkolu se spustí kontrola. Agent předkládá **důkaz** (výstup testů, spuštěný příkaz), ne pouhé tvrzení, že je hotovo. Rozsah se nerozšiřuje automaticky: agent rozšíření navrhne a člověk rozhodne.
 5. **Review v čerstvém kontextu.** Druhá relace nebo jiný agent dostane jen diff a kritéria (`SPEC.md`, `PLAN.md`), ne historii úvah, a hledá rozpory s požadavky. Agent, který kód napsal, je špatným recenzentem vlastní práce. Recenzent zaměřený na hledání chyb nějaké vždy najde, proto ho instruuj, ať hlásí jen to, co ovlivňuje správnost nebo splnění požadavků; jinak roste nadbytečná složitost.
 6. **Lidské review diffu a porozumění** (kapitola 9). Kontrolní seznam níže.
-7. **Zápis a předání.** Aktualizuj `SPEC.md` a `TASKS.md`, zapiš rozhodnutí do `DECISIONS.md`, smaž `PLAN.md`, napiš popis změny s důkazy (4.8) a commit s popisem.
+7. **Zápis a předání.** Aktualizuj `SPEC.md` a `TASKS.md`, zapiš rozhodnutí do `DECISIONS.md`, smaž `PLAN.md`, napiš popis změny s důkazy (4.8) a commit s popisem do větve úkolu.
+8. **Začlenění.** Větev se slučuje do hlavní větve až po úspěšných kontrolách a souhlasu člověka, který ji zkontroloval. Agent buď sloučí sám na výslovný pokyn, nebo člověka vyzve a uvede přesné příkazy; po sloučení se kontroly spustí znovu a větev se smaže. V týmu stejnou roli hraje pull request.
 
 ### Jak zadat úkol
 
@@ -420,6 +428,7 @@ Dobré zadání obsahuje cíl, relevantní část projektu, hranice, konkrétní
 - Když jsi agenta opravoval dvakrát kvůli téže věci, začni znovu s lepším zadáním, které zahrnuje, co jsi zjistil. Čistá relace s dobrým zadáním obvykle překoná dlouhou relaci plnou oprav. Pokud se chyba opakuje, zlepši specifikaci, test nebo vynucení.
 - Neomezené „prozkoumej“ vede k přečtení stovek souborů. Vymezuj rozsah, nebo průzkum svěř pomocnému agentovi, aby nezahltil hlavní kontext.
 - Drž malé commity s popisem účelu. Usnadňují review i vrácení změny.
+- Jeden úkol = jedna větev. Nesouvisející změnu nepřidávej do cizí větve; založ pro ni vlastní úkol.
 - Cokoli má přežít konec relace, patří do souboru, ne jen do konverzace.
 
 ### Kontrolní seznam lidského review
@@ -825,3 +834,4 @@ Všechny tři zdroje se shodují na dvouvrstvé struktuře: krátký trvalý kon
 - **2.0** – přepracování podle rolí místo souborů; ověření proti oficiální dokumentaci nástrojů; oddělení jádra od nástrojové přílohy.
 - **Revize 3** – nezávislá revize provedená jinými nástroji, přinesla zejména kapitolu o bezpečnosti a autonomii, vrstvy ověření, varovné signály a kontrolní seznamy. Nástrojová příloha v ní byla zredukována na seznam otázek a odstraněny zdroje, ukázkový příklad a rozlišení převzatých a autorských částí.
 - **4.0** – sloučení verze 2.0 a vybraných částí revize 3; přidán popis změny s důkazy jako způsob, jak nezvyšovat počet souborů; hodnocení přepracováno s ohledem na praxi (rubrika s úrovněmi, důraz na obhajobu); příklad rozšířen o popis změny a nález při review.
+- **4.1** – práce ve větvi úkolu se slučováním do hlavní větve až po souhlasu člověka (kapitoly 6 a 7); chování stavového logu při přepínání a slučování větví (4.5); dokument je metodikou šablony, ze které vznikají další projekty, a neodkazuje na konkrétní předchozí projekt.

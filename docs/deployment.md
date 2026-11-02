@@ -1,8 +1,7 @@
 # Deployment na IIS (Windows Server)
 
 Tento návod popisuje postup nasazení Next.js aplikace na IIS server s
-PostgreSQL databází. **Šablona** — vytěžená z `projects-v1-app`'s
-deployment návodu; appka postavená na `core-app` nahradí placeholdery
+PostgreSQL databází. **Šablona** — appka postavená na `core-app` nahradí placeholdery
 níže (`core-app`, `CoreApp`, `3100`, `core.pslib.cz`) svými vlastními
 hodnotami.
 

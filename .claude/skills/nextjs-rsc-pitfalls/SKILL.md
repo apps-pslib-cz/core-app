@@ -6,9 +6,9 @@ description: Use when writing or reviewing Server Components in this app (files 
 # Next.js RSC pitfalls in this app
 
 Server Components (RSC) have constraints that don't show up in a
-client-only mental model. Two concrete bugs hit `projects-v1-app` (the
-project this template was extracted from) for exactly this reason — check
-for both whenever you touch a file that has no `"use client"` directive.
+client-only mental model. Two concrete bugs hit apps built on this
+template for exactly this reason — check for both whenever you touch a
+file that has no `"use client"` directive.
 
 ## 1. Never pass a function as a prop from a Server Component into a Client Component
 

@@ -25,7 +25,7 @@ export function AppHeader({
 }: AppHeaderProps) {
   return (
     <AppShell.Header h={height} style={style} className={className}>
-      {/* Větší okraj než obsah - logo dál od hrany (jako projects-v1-app). */}
+      {/* Větší okraj než obsah - logo dál od hrany. */}
       <Group ref={rowRef} justify="space-between" h="100%" px={{ base: "md", sm: "xl" }} wrap="nowrap">
         {leftSection && <Group>{leftSection}</Group>}
         {navigationItems && (

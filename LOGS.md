@@ -7,3 +7,5 @@ This is an audit trail of observed task status changes, not approval or evidence
 | --- | --- | --- | --- | --- |
 | 2026-11-02T22:52:15.965Z | T-1 | new | in-progress | github-copilot |
 | 2026-11-02T22:52:30.445Z | T-1 | in-progress | done | github-copilot |
+| 2026-11-02T23:08:04.510Z | T-2 | new | in-progress | claude-code |
+| 2026-11-02T23:23:51.379Z | T-2 | new | done | claude-code |
