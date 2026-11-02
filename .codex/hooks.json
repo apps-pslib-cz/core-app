@@ -1,0 +1,17 @@
+{
+  "description": "Record task status transitions without storing prompts or tool output.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/scripts/log-task-status.mjs\" --source codex",
+            "commandWindows": "node \"$(git rev-parse --show-toplevel)\\scripts\\log-task-status.mjs\" --source codex",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

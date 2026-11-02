@@ -99,5 +99,5 @@ const refreshRef = useRef<() => void>();
 refreshRef.current?.();
 ```
 
-Víc v `.claude/skills/nextjs-datatable-conventions` (pokud je v appce
+Víc v `.agents/skills/nextjs-datatable-conventions` (pokud je v appce
 nainstalovaný).

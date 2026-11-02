@@ -1,7 +1,6 @@
 ---
 name: nextjs-rsc-pitfalls
 description: Use when writing or reviewing Server Components in this app (files under src/app/[lang]/(front) or src/app/[lang]/dashboard without a "use client" directive), when a page returns an unexplained 500 in dev, or when verifying a fix locally end-to-end (starting the dev server, hitting a route, checking the database). Covers RSC/Mantine gotchas and the local verification workflow.
-version: 1.0.0
 ---
 
 # Next.js RSC pitfalls in this app

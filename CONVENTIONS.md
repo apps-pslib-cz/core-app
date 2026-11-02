@@ -10,13 +10,27 @@ konverzaci přehlédnout. Cokoli, co musí platit bezvýjimečně, patří do ho
 ne jen sem (viz `AGENTS.md`).
 
 Úzká, situační témata mají vlastní skill místo místa tady:
-- psaní/úprava API route handleru → `.claude/skills/nextjs-api-route-conventions`
-- Server vs. Client Component chyby → `.claude/skills/nextjs-rsc-pitfalls`
-- nový/upravený seznam s `DataTable` → `.claude/skills/nextjs-datatable-conventions`
-- entita/mutace přes `@tanstack/react-query` → `.claude/skills/nextjs-tanstack-query-conventions`
-- nový/měněný uživatelský text → `.claude/skills/nextjs-i18n-conventions`
+- psaní/úprava API route handleru → `.agents/skills/nextjs-api-route-conventions`
+- Server vs. Client Component chyby → `.agents/skills/nextjs-rsc-pitfalls`
+- nový/upravený seznam s `DataTable` → `.agents/skills/nextjs-datatable-conventions`
+- entita/mutace přes `@tanstack/react-query` → `.agents/skills/nextjs-tanstack-query-conventions`
+- nový/měněný uživatelský text → `.agents/skills/nextjs-i18n-conventions`
 
 Tenhle soubor je mapa celku; skilly jsou podrobnosti k jedné jeho části.
+
+## Agentní workflow
+
+`AGENTS.md` je společný zdroj instrukcí; `CLAUDE.md` je pouze Claude Code
+vstupní bod. Skills jsou kanonicky v `.agents/skills` a zrcadlí se do
+`.claude/skills`, protože jednotlivé nástroje mají odlišné nativní cesty.
+Změny skills dělej v kanonickém umístění a zrcadlo ověř přes npm příkazy
+uvedené v `AGENTS.md`.
+
+Změny stavu úkolů zjišťují nativní hooky nástrojů a zapisují přes společný
+`scripts/log-task-status.mjs` do `LOGS.md`. Log obsahuje jen čas, ID úkolu,
+přechod stavu a nástroj, který změnu zjistil; neukládá konverzace a
+nenahrazuje schválení ani testovací důkazy. Hooky Copilotu ve VS Code jsou
+ve Preview a Codex vyžaduje kontrolu/důvěru k projektovým hookům.
 
 **Tohle je šablonová appka.** Konkrétní appka postavená na tomhle základu
 si tenhle soubor převezme a upraví podle svých skutečných potřeb (vlastní
@@ -116,14 +130,14 @@ kontroly, nikdy ruční `user.roles.includes(...)` tam, kde jde o hierarchii.
 
 ## Server a Client Components (Next.js App Router)
 
-Viz `.claude/skills/nextjs-rsc-pitfalls` pro konkrétní chyby, co v tomhle
+Viz `.agents/skills/nextjs-rsc-pitfalls` pro konkrétní chyby, co v tomhle
 projektu (resp. v `projects-v1-app`, odkud je appka vytěžená) už nastaly
 (funkce jako prop ze Server Component, Mantine `List` bez RSC-safe exportu)
 a jak se jim vyhnout.
 
 ## API route handlery
 
-Viz `.claude/skills/nextjs-api-route-conventions` pro celý vzor
+Viz `.agents/skills/nextjs-api-route-conventions` pro celý vzor
 (`requireAuthentication` + `RoleChecker` hierarchie + `try/catch` →
 `handleError`). Nepiš autorizaci ručně (`if (!user.roles.includes("admin")) ...`).
 
@@ -143,14 +157,14 @@ Viz `.claude/skills/nextjs-api-route-conventions` pro celý vzor
 
 Entita/mutace mimo `DataTable` (detail, editační formulář, create
 formulář, delete/sync akce) jde přes `@tanstack/react-query` — viz
-`.claude/skills/nextjs-tanstack-query-conventions`. `DataTable`'s vlastní
+`.agents/skills/nextjs-tanstack-query-conventions`. `DataTable`'s vlastní
 list-fetching zůstává na `dataFetcher`/`onMountRefresh` (viz
-`.claude/skills/nextjs-datatable-conventions`) — obě žijí na stejné
+`.agents/skills/nextjs-datatable-conventions`) — obě žijí na stejné
 stránce vedle sebe, nejde o náhradu jedné druhou.
 
 ## Internacionalizace (i18n)
 
-Podrobný vzor je ve skillu `.claude/skills/nextjs-i18n-conventions`. Stručně:
+Podrobný vzor je ve skillu `.agents/skills/nextjs-i18n-conventions`. Stručně:
 
 - Uživatelský text jde přes `useDictionary()` (`@/hooks`) a
   `src/assets/dictionaries/{cs,en}.json` — vždy s fallbackem:

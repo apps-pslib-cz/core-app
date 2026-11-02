@@ -55,8 +55,9 @@ Hotovo: auth/role vrstva, `BaseLayout`/`SettingsDrawer`, `DataTable`,
 administrace uživatelů (seznam/detail/vytvoření/úprava/smazání,
 synchronizace avatarů a aktivity z OAuth serveru) přepsaná na
 `@tanstack/react-query`, chybové stránky, admin logy, footer stránky,
-agentická infrastruktura (`CONVENTIONS.md`, `SPEC.md`/`TASKS.md`/
-`DECISIONS.md`/`IDEAS.md`, `.claude/skills`, `.claude/agents`),
+agentická infrastruktura pro Claude Code, GitHub Copilot a Codex
+(`AGENTS.md`, `.agents/skills`, nativní hook konfigurace, `LOGS.md` a
+projektové záznamy v `SPEC.md`/`TASKS.md`/`DECISIONS.md`/`IDEAS.md`),
 deployment skripty a návod (`scripts/`, `docs/deployment.md`).
 
 Zbývá (mimo rozsah dosavadní práce, viz `DECISIONS.md`): skutečné první
@@ -68,3 +69,4 @@ použití šablony — migrace `evaluation-v1` na tenhle základ.
 - [`SPEC.md`](SPEC.md) — co appka (jako šablona) dělá a jak to ověřit.
 - [`docs/deployment.md`](docs/deployment.md) — nasazení na IIS/Windows Service.
 - [`dev_notes/agentic-engineering.md`](dev_notes/agentic-engineering.md) — metodika agentního vývoje, ze které `CONVENTIONS.md`/`SPEC.md`/`TASKS.md`/`DECISIONS.md` vycházejí.
+- `npm run agent:skills:sync` / `npm run agent:skills:check` — údržba a kontrola kanonických Agent Skills a Claude zrcadla.

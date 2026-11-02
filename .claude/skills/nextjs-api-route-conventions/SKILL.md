@@ -1,7 +1,6 @@
 ---
 name: nextjs-api-route-conventions
 description: Use when writing a new API route handler (src/app/api/**/route.ts) or a new authorization helper in this codebase, or when touching an existing handler's auth/error-handling logic. Covers the canonical requireAuthentication + handleError pattern, the role hierarchy, and the error envelope frontend code must parse. Complements nextjs-app-reviewer (which reviews after the fact) and nextjs-api-authz-review (which audits an existing surface) — this one is for writing it right the first time.
-version: 1.0.0
 ---
 
 # API route conventions in this app

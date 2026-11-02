@@ -17,12 +17,25 @@ Liberec) na stejném OAuth serveru (`oauth.pslib.cz`). Role appky jsou
 obecné (`src/types/roles.ts`, `User.roles: string[]`) - konkrétní
 appka postavená na téhle šabloně si je přejmenuje/rozšíří podle svých
 potřeb, stejně jako název appky v `src/config/app.ts` a OAuth
-scope/claimy v `.env`. Než začneš netriviální změnu, přečti si
+scope/claimy v `.env`. Projekt zároveň poskytuje nástrojově neutrální
+metodiku a agentskou podporu Claude Code, GitHub Copilot a Codex. Než začneš netriviální změnu, přečti si
 `CONVENTIONS.md` - tenhle soubor jen doplňuje provozní pravidla,
 strukturu a styl popisuje ona. Oba vycházejí z
 `dev_notes/agentic-engineering.md` - u netriviální změny se řiď jejím
 postupem (kapitola 7: zadání a riziko → plán → rozpad na úkoly →
 implementace → review → zápis a předání).
+
+## Spolupráce agentů
+
+- `AGENTS.md` je jediný zdroj společných instrukcí. `CLAUDE.md` ho importuje;
+  nepřidávej duplicitní pravidla do `.github/copilot-instructions.md`.
+- Skills upravuj v `.agents/skills`; pro Claude Code synchronizuj nativní
+  kopie příkazem `npm run agent:skills:sync` a ověř je přes
+  `npm run agent:skills:check`.
+- Relevantní workflow načti z `.agents/skills/agentic-engineering/SKILL.md`.
+- Hook konfigurace spouštějí společný `scripts/log-task-status.mjs`.
+  `LOGS.md` neupravuj ručně; log neobsahuje prompty, výstupy nástrojů ani
+  osobní údaje a není schválením ani důkazem splnění kritéria.
 
 ## Příkazy
 
@@ -39,11 +52,11 @@ npx playwright test            # e2e (tests/e2e), zatím prázdné
 ## Postup práce
 
 1. Před netriviální změnou zkontroluj relevantní skill
-   (`.claude/skills/nextjs-api-route-conventions` pro API routy,
-   `.claude/skills/nextjs-rsc-pitfalls` pro Server/Client Component
-   chyby, `.claude/skills/nextjs-datatable-conventions` pro `DataTable`,
-   `.claude/skills/nextjs-tanstack-query-conventions` pro fetch/mutaci
-   entity mimo DataTable, `.claude/skills/nextjs-i18n-conventions` pro
+  (`.agents/skills/nextjs-api-route-conventions` pro API routy,
+  `.agents/skills/nextjs-rsc-pitfalls` pro Server/Client Component
+  chyby, `.agents/skills/nextjs-datatable-conventions` pro `DataTable`,
+  `.agents/skills/nextjs-tanstack-query-conventions` pro fetch/mutaci
+  entity mimo DataTable, `.agents/skills/nextjs-i18n-conventions` pro
    nový uživatelský text).
 2. Po každé netriviální změně spusť `npx tsc --noEmit -p .` a
    `npx vitest run` - ne až na konci celé úlohy.

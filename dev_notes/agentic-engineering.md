@@ -250,12 +250,13 @@ Mezi tím, *co* se má udělat, a rozpadem na kroky je u netriviálních změn u
 
 `PLAN.md` je **pomíjivý**: po dokončení featury ho smaž a podstatné závěry přenes do `DECISIONS.md`. Když jde změnu popsat jednou větou (oprava překlepu, přejmenování), plán přeskoč.
 
-### 4.5 TASKS.md
+### 4.5 TASKS.md, IDEAS.md a stavový log
 
 Rozdělení práce na malé kroky. Každý krok musí jít samostatně implementovat a ověřit, ideálně tak, aby šel zadat agentovi jako uzavřený úkol. U každého úkolu uveď identifikátor, cíl, závislosti, které kritérium splňuje a **podmínku hotovo**. Třídu rizika (kapitola 6) uveď u úkolů, kde není zřejmá.
 
 ```markdown
-## T-1 Validace termínu
+## T-1
+- nazev: Validace termínu
 Cíl: Termín v minulosti nelze uložit.
 Splňuje: AC-3
 Závisí na: –
@@ -264,7 +265,20 @@ Hotovo, když: jednotkový test pokrývá platné i neplatné datum, `npm test` 
 Stav: [x] hotovo
 ```
 
-Stavy: `[ ]` připraveno · `[~]` rozpracováno · `[!]` blokováno · `[x]` hotovo. `TASKS.md` nese i stav práce, samostatný `TODO.md` se nedoporučuje (dvě místa pro jednu pravdu). Odložené nápady patří do sekce „Odloženo“ na konci souboru nebo do issue trackeru.
+Nadpis úkolu obsahuje pouze stabilní ID; popisný název je první pole
+`- nazev:`. Stavy: `[ ]` připraveno · `[~]` rozpracováno · `[!]` blokováno ·
+`[x]` hotovo. `TASKS.md` je jediný zdroj aktuálního stavu úkolů; samostatný
+`TODO.md` se nedoporučuje, protože vytváří druhé místo pro tutéž pravdu.
+
+Pokud projekt používá `IDEAS.md`, každá idea má neměnné ID a právě pole
+`Nazev`, `Navrh`, `Stav` a `Vazby`. Po převodu na úkol idea zůstává
+zachována; idea i task na sebe odkazují. Odložené a zamítnuté návrhy se
+nesmažou. Evidence ani analýza nápadu samy o sobě nepovolují implementaci.
+
+Automatický `LOGS.md` může zachycovat pozorované přechody stavů. Je-li
+generován hookem, neupravuje se ručně a nesmí se považovat za souhlas člověka,
+důkaz splnění AC ani náhradu tasku. Ukládej jen nezbytná metadata; neukládej
+prompty, přepisy konverzací, výstupy nástrojů ani osobní údaje.
 
 ### 4.6 DECISIONS.md
 
@@ -643,7 +657,8 @@ Přidej úkol s termínem zítra, označ ho jako hotový, obnov stránku a ově�
 ```markdown
 # Úkoly
 
-## T-1 Validace termínu
+## T-1
+- nazev: Validace termínu
 Cíl: Termín v minulosti nelze uložit.
 Splňuje: AC-3
 Závisí na: –
@@ -651,7 +666,8 @@ Riziko: B
 Hotovo, když: jednotkový test pokrývá včerejší, dnešní i zítřejší datum, `npm test` a `npm run lint` procházejí a diff je zkontrolován.
 Stav: [x] hotovo
 
-## T-2 Filtrování podle termínu
+## T-2
+- nazev: Filtrování podle termínu
 Cíl: Přepínač „dnes / tento týden / vše“.
 Splňuje: AC-5
 Závisí na: T-1
@@ -728,17 +744,21 @@ Ukázka ilustruje dvě věci z kapitol 1 a 7: zelený test dokazuje jen to, co s
 
 ## Příloha A: Mapování rolí na nástroje
 
-**Ověřeno k 29. 9. 2026 podle oficiální dokumentace** (odkazy v Příloze B). Tato příloha je jediná část dokumentu, která se při změně nástrojů upravuje. Čísla verzí a názvy nastavení se mění; před použitím ve výuce je ověř.
+**Mapování aktualizováno 2. 11. 2026 podle oficiální dokumentace**
+(odkazy v Příloze B). Tato příloha je jediná část dokumentu, která se při
+změně nástrojů upravuje. Názvy nastavení a dostupnost funkcí se mění; před
+použitím v jiné verzi IDE nebo prohlížeči je ověř.
 
 | | Claude Code | GitHub Copilot | OpenAI Codex |
 |---|---|---|---|
 | **Hlavní instrukční soubor** | `CLAUDE.md` (nebo `.claude/CLAUDE.md`). `AGENTS.md` čte přímo jen tehdy, když v projektu ani nad ním není žádný `CLAUDE.md` (od verze 2.1.277). Když existují oba, čte se jen `CLAUDE.md`. | `.github/copilot-instructions.md`, nebo `AGENTS.md` kdekoli v repozitáři, nebo jeden `CLAUDE.md` či `GEMINI.md` v kořeni. | `AGENTS.md`; v adresáři může být i `AGENTS.override.md`, který má přednost. Globální ve `~/.codex/`. |
 | **Vnořené soubory** | Soubory v nadřazených adresářích se načtou při startu, v podadresářích až při práci se soubory tam. | Nejbližší `AGENTS.md` má přednost. | Spojují se od kořene projektu k pracovnímu adresáři, bližší jsou v textu později a mají přednost. Nejvýše jeden soubor na adresář. |
 | **Pravidla podle cesty** | `.claude/rules/*.md` s hlavičkou `paths:`. | `.github/instructions/*.instructions.md` s hlavičkou `applyTo:`. Na GitHub.com je podporují jen cloud agent a code review; v IDE ověř. | Vnořené `AGENTS.md` v podadresářích. |
-| **Znalosti podle situace** | Skills: `.claude/skills/<název>/SKILL.md`. | Agent skills (viz dokumentace Copilotu). | Skills (viz dokumentace Codexu). |
+| **Znalosti podle situace** | Agent Skills: `.claude/skills/<název>/SKILL.md`. | Agent Skills: `.github/skills/`, `.agents/skills/` nebo `.claude/skills/` podle podporovaného prostředí. | Agent Skills: `.agents/skills/<název>/SKILL.md`. |
 | **Doporučená nebo mezní velikost** | Cílit pod 200 řádků na soubor; delší snižuje dodržování pravidel. | Vlastní návod na tvorbu instrukcí požaduje nejvýše zhruba dvě stránky. | Tvrdý strop 32 KiB pro všechny načtené soubory dohromady (`project_doc_max_bytes`); po dosažení se další soubory nepřidají. |
 | **Plánování bez změn souborů** | Režim plánování (plan mode). | Viz dokumentace Copilotu. | Viz dokumentace Codexu. |
 | **Oprávnění a vynucení** | Zákazy a schvalování oprávnění, hooky (např. blokování akce nebo ukončení práce, dokud kontrola neprojde). | Hooks (viz dokumentace Copilotu). | Hooks a oprávnění (viz dokumentace Codexu). |
+| **Projektové hooky** | `.claude/settings.json`, událost `FileChanged` pro `TASKS.md`. | `.github/hooks/*.json`; ve VS Code je hook rozhraní ve Preview. | `.codex/hooks.json` nebo `.codex/config.toml`; projektové hooky vyžadují kontrolu a důvěru uživatele. |
 | **Ověření, že se soubor načetl** | `/context` (seznam „Memory files“) nebo `/memory`. | V Copilot Chat na GitHub.com je soubor uveden v referencích odpovědi. | `codex --ask-for-approval never "Summarize the current instructions."` |
 | **Časté pasti** | `CLAUDE.md` tiše přebíjí `AGENTS.md`. Řešení: `CLAUDE.md` s řádkem `@AGENTS.md`. Import se načte hned při startu. Symbolický odkaz `CLAUDE.md` → `AGENTS.md` na Windows nespolehlivý; použij import. | Code review čte instrukce z větve s pull requestem, ne z hlavní větve. | `AGENTS.override.md` tiše přebíjí `AGENTS.md`. Prázdné soubory se přeskakují. Po dosažení stropu se instrukce oříznou. |
 
@@ -750,6 +770,8 @@ Ukázka ilustruje dvě věci z kapitol 1 a 7: zelený test dokazuje jen to, co s
 4. **Nezaváděj duplicitní `.github/copilot-instructions.md`.** Duplikace vede k rozporům. Pokud ho použiješ, drž v něm jen to, co `AGENTS.md` neobsahuje.
 5. **Ostatní nástroje:** Gemini CLI vyžaduje nastavení `context.fileName` v `.gemini/settings.json`, Aider `read: AGENTS.md` v `.aider.conf.yml`. Kiro `AGENTS.md` podporuje a vždy ho načítá.
 6. **Před začátkem výuky ověř v konkrétním prostředí** dvě věci: že se instrukce načítají a že fungují bezpečnostní hranice (zákazy, schvalování). Nástroj se vybírá podle didaktického cíle, ne naopak.
+7. **Situační skills ukládej jako Agent Skills** do společného umístění podporovaného cílovými nástroji. Pokud některý nástroj potřebuje zrcadlo, generuj ho a kontroluj skriptem; neupravuj kopie ručně.
+8. **Hooky nejsou přenositelné jen tím, že sdílejí cestu nebo název události.** Každý nástroj má vlastní payload, chování při chybě a trust model. Konfiguraci ověř v cílovém runtime a v logu zaznamenávej jen nezbytná metadata.
 
 ---
 
@@ -762,6 +784,12 @@ Ukázka ilustruje dvě věci z kapitol 1 a 7: zelený test dokazuje jen to, co s
 - [agents.md (otevřený formát)](https://agents.md)
 - [OpenAI Codex: Custom instructions with AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
 - [GitHub Docs: Adding repository custom instructions for Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions)
+- [Agent Skills specification](https://agentskills.io/specification)
+- [VS Code: Agent Skills](https://code.visualstudio.com/docs/agent-customization/agent-skills)
+- [GitHub Copilot hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference)
+- [VS Code: Agent hooks](https://code.visualstudio.com/docs/agent-customization/hooks)
+- [OpenAI Codex: Hooks](https://learn.chatgpt.com/docs/hooks)
+- [OpenAI Codex: Build skills](https://learn.chatgpt.com/docs/build-skills)
 - [GitHub Spec Kit](https://github.com/github/spec-kit)
 - [Kiro: Specs](https://kiro.dev/docs/specs/) a [Kiro: Steering](https://kiro.dev/docs/steering/)
 

@@ -1,7 +1,6 @@
 ---
 name: nextjs-tanstack-query-conventions
 description: Use when fetching or mutating a single entity (detail view, edit form, create form, delete/sync action) from a Client Component in this app. Covers query-key conventions, the useQuery/useMutation + invalidateQueries pattern, and how this deliberately does NOT replace DataTable's own list-fetching — a reviewer checking this app's data-fetching should expect this pattern outside DataTable and the dataFetcher/onMountRefresh pattern inside it.
-version: 1.0.0
 ---
 
 # TanStack Query for entity fetch/mutate (not for DataTable lists)

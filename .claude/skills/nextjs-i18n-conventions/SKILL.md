@@ -1,7 +1,6 @@
 ---
 name: nextjs-i18n-conventions
 description: Use when adding or changing any user-visible text in this app, or when touching src/assets/dictionaries/{cs,en}.json. Covers the dictionary pattern, the Client vs. Server Component split, and how the [lang] URL segment is the actual source of truth for locale.
-version: 1.0.0
 ---
 
 # Adding user-visible text in this app

@@ -1,21 +1,12 @@
 # Nápady (IDEAS)
 
-Syrová zadání problémů a nápadů od uživatele — v jeho vlastních slovech,
-bez určeného rozsahu. Tohle **není** druhý tracker vedle `TASKS.md` (viz
-`dev_notes/agentic-engineering.md`, kapitola 4.5, rada "samostatný
-TODO.md se nedoporučuje" — tenhle soubor cílí na stejnou roli, ale jako
-čistě vstupně-výstupní schránka bez vlastního stavu, ne jako druhý
-stavový tracker).
+Nápady si ponechávají neměnná ID i po převedení na úkol, aby šlo dohledat,
+proč práce vznikla. Každý záznam má právě čtyři pole: `Nazev`, `Navrh`,
+`Stav` a `Vazby`. Rozsah implementace ani souhlas člověka se z nápadu
+neodvozují.
 
-Pracovní postup:
-1. Uživatel sem napíše problém/nápad, jak mu přijde na mysl.
-2. Agent si ho přečte, doptá se na nejasnosti a detaily.
-3. Z odpovědí vznikne záznam `T-N` v `TASKS.md` (Cíl/Splňuje/Riziko/Hotovo
-   když).
-4. Agent položku odtud smaže — zůstává jen to, co ještě nemá kód úkolu.
-
-## Nalezené chyby
-
-## Nové vlastnosti
-
-## Kvalita kódu a dokumentace
+## IDEA-001
+- Nazev: Společná agentní podpora a dohledatelné poznámky
+- Navrh: Rodičovský projekt má poskytovat obecnou metodiku a sdílenou podporu pro Claude Code, GitHub Copilot a Codex. Jednotný zdroj instrukcí a skills má umožnit navázat na práci jiného agenta; stručný automatický záznam změn stavů úkolů má zlepšit předání bez ukládání konverzací.
+- Stav: hotovo
+- Vazby: [T-1](TASKS.md#t-1)

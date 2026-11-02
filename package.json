@@ -12,6 +12,8 @@
     "test:unit:run": "vitest run",
     "test:unit:watch": "vitest --watch",
     "test:unit:coverage": "vitest --coverage",
+    "agent:skills:sync": "node scripts/sync-agent-skills.mjs --sync",
+    "agent:skills:check": "node scripts/sync-agent-skills.mjs --check",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",

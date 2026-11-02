@@ -188,3 +188,39 @@ v `MainNavigation.tsx` (popisky do `nav` ve slovnících) a podsekce do
 `dashboardMenuStructure`. Vlastní sekce s podstránkami použije
 `<AppLayout sidebar={...}>`. Na hlavičce nic dalšího nastavovat nemusí,
 zhuštění se přizpůsobí délce menu i jménu uživatele.
+
+## D-9 Společné instrukce a přenositelné skills (2026-11-02)
+Rozhodnutí: `AGENTS.md` je jediný zdroj společných instrukcí pro Claude Code,
+GitHub Copilot a Codex; `CLAUDE.md` zůstává jen jako import. Skills jsou
+kanonicky v `.agents/skills`. Protože Claude Code používá nativní cestu
+`.claude/skills`, tato cesta je generované zrcadlo, ne druhé místo pro
+ruční úpravy.
+
+Důvod: kopírované instrukce se rozcházejí a každý nástroj má jiné nativní
+cesty. Otevřený formát Agent Skills umožňuje Copilotu a Codexu sdílet stejný
+obsah; Claude Code vyžaduje svoji projektovou cestu. Symlinky nejsou pro
+Windows spolehlivou náhradou.
+
+Důsledek: nové společné skills patří do `.agents/skills` a zrcadlo se
+aktualizuje příkazem `npm run agent:skills:sync`. `npm run agent:skills:check`
+ověřuje obsahovou shodu a metadata. Nativní agent definice zůstávají
+nástrojově specifické; jejich sjednocení je mimo tento úkol.
+
+Schválení: uživatel v chatu dne 2026-11-02.
+
+## D-10 Automatický log změn stavů úkolů (2026-11-02)
+Rozhodnutí: změny `Stav` v `TASKS.md` se zaznamenávají do kořenového
+`LOGS.md` skriptem `scripts/log-task-status.mjs`. Hooky Claude Code, GitHub
+Copilotu a Codexu volají tentýž skript. Záznam obsahuje jen čas, task ID,
+předchozí/nový stav a zdroj, který změnu zjistil.
+
+Důvod: strukturovaná historie pomáhá předávat rozpracovanou práci mezi agenty
+a relacemi, aniž by se do repozitáře kopírovaly celé konverzace, potenciálně
+citlivé vstupy nebo výstupy nástrojů.
+
+Důsledek: log je automaticky generovaný a nesmí se upravovat ručně. Není
+schválením rozsahu, důkazem splnění AC ani náhradou `TASKS.md`, `DECISIONS.md`
+nebo testů. Copilot hooky ve VS Code jsou ve Preview; Codex před spuštěním
+projektových hooků vyžaduje jejich kontrolu a důvěru.
+
+Schválení: uživatel v chatu dne 2026-11-02.

@@ -19,6 +19,8 @@ appka stavěla znovu: přihlášení, obecný model rolí, administraci
 uživatelů, nastavení appky per uživatel, chybové stránky, i18n (cs/en).
 Nejde o produkt pro koncového uživatele samotný — je to startovní bod pro
 další appky (první reálné použití: migrace `evaluation-v1`).
+Rodičovský projekt současně poskytuje obecnou metodiku a verzovanou agentní
+infrastrukturu pro Claude Code, GitHub Copilot a Codex.
 
 ## 2. Uživatelé a scénáře
 
@@ -72,16 +74,27 @@ nejsou součástí tohoto souboru, patří do nového `SPEC.md`.
   cizí, ani přímým voláním API.
 - [ ] AC-4: Nepřihlášený návštěvník na chráněné stránce dostane
   přihlašovací/chybovou stránku, ne prázdný výpis nebo pád.
+- [x] AC-5: Společné instrukce mají jediný zdroj v `AGENTS.md`; `CLAUDE.md`
+  je pouze Claude Code vstupní bod a pravidla pro ostatní nástroje se
+  neduplikují.
+- [x] AC-6: Skills mají validní standardní metadata v `.agents/skills` a
+  Claude zrcadlo je obsahově shodné; `npm run agent:skills:check` ověřuje
+  metadata i shodu.
+- [x] AC-7: Sdílený logovací skript zaznamená nový stav a další skutečný
+  přechod nejvýše jednou; jednotkové testy pokrývají opakované spuštění i
+  chybně zadané stavy.
+- [x] AC-8: Nativní hook konfigurace všech tří nástrojů volají stejný
+  skript; logovací formát neukládá prompty ani výstupy nástrojů.
 
 ## 6. Mimo rozsah
 
 - Přesný tvar API (request/response, chybové kódy, autorizační vzor) —
-  `.claude/skills/nextjs-api-route-conventions` a `CONVENTIONS.md`.
+  `.agents/skills/nextjs-api-route-conventions` a `CONVENTIONS.md`.
 - Nasazení a provoz (IIS, Windows Service, proměnné prostředí) —
   `docs/deployment.md`.
 - Doménová funkcionalita konkrétní appky postavené na šabloně — vlastní
   `SPEC.md` té appky.
-- Pokrytí internacionalizace textů — `.claude/skills/nextjs-i18n-conventions`.
+- Pokrytí internacionalizace textů — `.agents/skills/nextjs-i18n-conventions`.
 
 ## 7. Ověření od začátku do konce
 
@@ -91,3 +104,16 @@ vytvořit/upravit/smazat testovacího uživatele → odhlásit se a zkusit
 otevřít `/dashboard` bez přihlášení (čeká se `<UnauthorizedPage />`) →
 přihlásit se jako uživatel bez role `admin` a zkusit upravit cizí profil
 přímým voláním API (čeká se `403`).
+
+## 8. Agentní workflow
+
+Společná pravidla spolupráce jsou v kořenovém `AGENTS.md`; `CLAUDE.md` je
+Claude Code vstupní bod, který jej importuje. Skills mají jediný kanonický
+zdroj v `.agents/skills`; zrcadlo `.claude/skills` se generuje a kontroluje
+skriptem. Copilot a Codex používají své nativní hook konfigurace, které
+spouštějí společný `scripts/log-task-status.mjs`.
+
+`LOGS.md` zaznamenává pouze pozorované přechody stavu úkolu: čas, ID úkolu,
+předchozí a nový stav a nástroj, který změnu zjistil. Neobsahuje prompty,
+výstupy nástrojů ani osobní údaje a nenahrazuje rozhodnutí člověka ani důkaz
+akceptačního kritéria.

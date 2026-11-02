@@ -1,7 +1,6 @@
 ---
 name: nextjs-datatable-conventions
 description: Use when adding a new list/table page in this app, or adding a create/update/delete action next to an existing DataTable. Covers wiring columns, the server-side dataFetcher contract, and the onMountRefresh pattern that keeps the table in sync after a mutation.
-version: 1.0.0
 ---
 
 # Wiring a new list page with DataTable
