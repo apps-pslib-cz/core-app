@@ -11,9 +11,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # core-app — pravidla pro agenta
 
 Next.js App Router šablonová appka (Prisma/PostgreSQL, Mantine UI,
-NextAuth v5/Auth.js s Duende Identity Server OAuth) vytěžená z
-`projects-v1-app` jako základ pro další appky školy (SPŠSE a VOŠ
-Liberec) na stejném OAuth serveru (`oauth.pslib.cz`). Role appky jsou
+NextAuth v5/Auth.js s Duende Identity Server OAuth) jako základ pro
+další appky školy (SPŠSE a VOŠ Liberec) na stejném OAuth serveru
+(`oauth.pslib.cz`). Role appky jsou
 obecné (`src/types/roles.ts`, `User.roles: string[]`) - konkrétní
 appka postavená na téhle šabloně si je přejmenuje/rozšíří podle svých
 potřeb, stejně jako název appky v `src/config/app.ts` a OAuth
@@ -68,11 +68,38 @@ npx playwright test            # e2e (tests/e2e), zatím prázdné
    na PID, smazat scratch soubory) - needrž běžící procesy ani
    dočasný kód po sobě.
 
+## Práce ve větvi úkolu
+
+1. Samostatnou práci na úkolu (`T-N` v `TASKS.md`) začni v nové větvi
+   z aktuální hlavní větve (`main`/`master`):
+   `git switch -c task/T-N-kratky-popis`. Pracovní kopie musí být
+   čistá - cizí necommitnuté změny nepřenášej, zeptej se.
+2. Do větve úkolu commituj po logických krocích (formát v
+   `CONVENTIONS.md`), `LOGS.md` spolu s `TASKS.md`.
+3. Když kontroly z „Postup práce“ projdou a `TASKS.md` má důkazy,
+   předej: shrnutí, název větve, `git log --oneline <hlavní>..HEAD`,
+   a požádej o kontrolu.
+4. Do hlavní větve slučuj až po výslovném souhlasu uživatele
+   (`git switch <hlavní>`, `git merge --no-ff task/...`), po merge
+   znovu spusť testy a větev smaž (`git branch -d`). Bez souhlasu jen
+   uživatele vyzvi a uveď přesné příkazy.
+5. Dotaz nebo drobnost mimo úkol větev nepotřebuje - pak ale nic
+   necommituj.
+
+## Odvozené repozitáře
+
+Tahle šablona je výchozím bodem appek, které z ní vznikly (seznam
+v `SISTER-REPOS.md`). Chybu nalezenou tady, která se pravděpodobně
+týká i odvozených repozitářů, zapiš do `SISTER-REPOS.md` podle formátu
+tam. Odvozené repozitáře do téhož souboru zapisují chyby, které najdou
+u sebe. Opravu v jiném repozitáři dělá práce v tom repozitáři, ne odsud.
+
 ## Omezení
 
-- **Nikdy negituj commit, pokud o to uživatel výslovně nepožádá.**
-  Vlastní commity si dělá sám. Stejně tak nikdy nepushuj,
-  force-pushuj ani neměň historii bez výslovného svolení.
+- **Commituj jen do větve úkolu (`task/...`), nikdy přímo do hlavní
+  větve.** Merge do hlavní větve jen po výslovném souhlasu uživatele.
+  Nikdy nepushuj, force-pushuj ani neměň historii (rebase, amend,
+  reset) bez výslovného svolení.
 - Databázové migrace a `src/generated/prisma` (generovaný klient)
   needituj ručně - migrace přes Prisma nástroje, klient se generuje
   sám.

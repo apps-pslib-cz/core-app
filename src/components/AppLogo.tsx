@@ -12,7 +12,7 @@ interface AppLogoProps {
   clickable?: boolean; // New prop to control clickability
 }
 
-// Logo appky - placeholder převzatý z projects-v1-app, vyměňte za logo
+// Logo appky - placeholder šablony, vyměňte za logo
 // konkrétní appky postavené na téhle šabloně (public/images/logos/app2-*.svg).
 const AppLogo: React.FC<AppLogoProps> = ({
   width = 235,

@@ -1,6 +1,6 @@
 # core-app
 
-Univerzální šablonová appka (Next.js App Router, Prisma/PostgreSQL, Mantine UI, NextAuth v5 + Duende Identity Server OAuth) vytěžená z `projects-v1-app` - základ pro další appky SPŠSE a VOŠ Liberec se sdíleným přihlašováním přes `oauth.pslib.cz` a konzistentním UI.
+Univerzální šablonová appka (Next.js App Router, Prisma/PostgreSQL, Mantine UI, NextAuth v5 + Duende Identity Server OAuth) - základ pro další appky SPŠSE a VOŠ Liberec se sdíleným přihlašováním přes `oauth.pslib.cz` a konzistentním UI.
 
 ## Spuštění
 
@@ -60,8 +60,8 @@ agentická infrastruktura pro Claude Code, GitHub Copilot a Codex
 projektové záznamy v `SPEC.md`/`TASKS.md`/`DECISIONS.md`/`IDEAS.md`),
 deployment skripty a návod (`scripts/`, `docs/deployment.md`).
 
-Zbývá (mimo rozsah dosavadní práce, viz `DECISIONS.md`): skutečné první
-použití šablony — migrace `evaluation-v1` na tenhle základ.
+Appky postavené na šabloně a evidence chyb, které s ní sdílejí, jsou
+v [`SISTER-REPOS.md`](SISTER-REPOS.md).
 
 ## Další dokumentace
 

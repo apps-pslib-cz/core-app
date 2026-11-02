@@ -130,10 +130,9 @@ kontroly, nikdy ruční `user.roles.includes(...)` tam, kde jde o hierarchii.
 
 ## Server a Client Components (Next.js App Router)
 
-Viz `.agents/skills/nextjs-rsc-pitfalls` pro konkrétní chyby, co v tomhle
-projektu (resp. v `projects-v1-app`, odkud je appka vytěžená) už nastaly
-(funkce jako prop ze Server Component, Mantine `List` bez RSC-safe exportu)
-a jak se jim vyhnout.
+Viz `.agents/skills/nextjs-rsc-pitfalls` pro konkrétní chyby, co v appkách
+na téhle šabloně už nastaly (funkce jako prop ze Server Component, Mantine
+`List` bez RSC-safe exportu) a jak se jim vyhnout.
 
 ## API route handlery
 
@@ -210,6 +209,10 @@ chore: update dependencies
 ```
 
 Nejčastější typy: `feat`, `fix`, `chore`, `refactor`.
+
+Větev úkolu: `task/T-N-kratky-popis` (bez diakritiky, s pomlčkami),
+slučuje se `git merge --no-ff` až po souhlasu uživatele - postup
+v `AGENTS.md`, sekce „Práce ve větvi úkolu“.
 
 ## Co preferovat / co nepoužívat
 

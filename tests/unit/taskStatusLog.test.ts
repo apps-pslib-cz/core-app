@@ -16,6 +16,38 @@ function createFixture(tasks: string): string {
   return root;
 }
 
+function git(root: string, ...args: string[]): void {
+  execFileSync(
+    "git",
+    ["-C", root, "-c", "user.name=test", "-c", "user.email=test@example.invalid", ...args],
+    { stdio: "ignore" },
+  );
+}
+
+function commitTasks(root: string, tasks: string, message: string): void {
+  writeFileSync(path.join(root, "TASKS.md"), tasks, "utf8");
+  git(root, "add", "TASKS.md");
+  git(root, "commit", "-q", "-m", message);
+}
+
+function createGitFixture(tasks: string): string {
+  const root = createFixture(tasks);
+  git(root, "init", "-q", "-b", "main");
+  git(root, "add", "TASKS.md");
+  git(root, "commit", "-q", "-m", "init");
+  return root;
+}
+
+function logRows(root: string): string[] {
+  try {
+    return readFileSync(path.join(root, "LOGS.md"), "utf8")
+      .split(/\r?\n/)
+      .filter((line) => /^\| \d{4}-/.test(line));
+  } catch {
+    return [];
+  }
+}
+
 function runLogger(root: string): void {
   execFileSync(process.execPath, [loggerPath, "--root", root, "--source", "codex"]);
 }
@@ -43,6 +75,10 @@ describe("task status log", () => {
       "scripts/log-task-status.mjs",
     );
     expect(claudeConfig.hooks.FileChanged[0].hooks[0].command).toContain("--source claude-code");
+    expect(claudeConfig.hooks.PostToolUse[0].matcher).toBe("Edit|Write|MultiEdit");
+    expect(claudeConfig.hooks.PostToolUse[0].hooks[0].command).toBe(
+      claudeConfig.hooks.FileChanged[0].hooks[0].command,
+    );
     expect(copilotConfig.hooks.postToolUse[0].command).toContain("scripts/log-task-status.mjs");
     expect(copilotConfig.hooks.postToolUse[0].command).toContain("--source github-copilot");
     expect(codexConfig.hooks.PostToolUse[0].hooks[0].command).toContain(
@@ -89,5 +125,88 @@ describe("task status log", () => {
       "## T-4 Duplicate status\nStav: [ ] ready\nStav: [x] done\n",
     );
     expect(() => runLogger(duplicateStatusRoot)).toThrow();
+  });
+
+  describe("in a git repository", () => {
+    it("logs an uncommitted transition from the committed status once", () => {
+      const root = createGitFixture("## T-1 Example\nStav: [ ] ready\n");
+
+      runLogger(root);
+      expect(logRows(root)).toHaveLength(0);
+
+      writeFileSync(path.join(root, "TASKS.md"), "## T-1 Example\nStav: [~] in progress\n", "utf8");
+      runLogger(root);
+      runLogger(root);
+
+      const rows = logRows(root);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toContain("| T-1 | ready | in-progress | codex |");
+    });
+
+    it("does not log branch switches, pulls or merges as transitions", () => {
+      const root = createGitFixture("## T-1 Example\nStav: [ ] ready\n");
+      git(root, "switch", "-q", "-c", "task/T-1");
+      commitTasks(root, "## T-1 Example\nStav: [x] done\n", "done");
+
+      git(root, "switch", "-q", "main");
+      runLogger(root);
+      git(root, "switch", "-q", "task/T-1");
+      runLogger(root);
+      git(root, "switch", "-q", "main");
+      git(root, "merge", "-q", "--ff-only", "task/T-1");
+      runLogger(root);
+
+      expect(logRows(root)).toHaveLength(0);
+    });
+
+    it("merges LOGS.md rows appended on two branches without a conflict", () => {
+      const root = createGitFixture("## T-1 A\nStav: [ ] ready\n## T-2 B\nStav: [ ] ready\n");
+      writeFileSync(
+        path.join(root, ".gitattributes"),
+        readFileSync(path.join(workspaceRoot, ".gitattributes"), "utf8"),
+        "utf8",
+      );
+      git(root, "add", ".gitattributes");
+      git(root, "commit", "-q", "-m", "attributes");
+      runLogger(root);
+      git(root, "add", "-A");
+      git(root, "commit", "-q", "-m", "empty log");
+
+      git(root, "switch", "-q", "-c", "task/T-1");
+      writeFileSync(path.join(root, "TASKS.md"), "## T-1 A\nStav: [~] x\n## T-2 B\nStav: [ ] ready\n", "utf8");
+      runLogger(root);
+      git(root, "commit", "-q", "-am", "T-1");
+
+      git(root, "switch", "-q", "main");
+      git(root, "switch", "-q", "-c", "task/T-2");
+      writeFileSync(path.join(root, "TASKS.md"), "## T-1 A\nStav: [ ] ready\n## T-2 B\nStav: [~] x\n", "utf8");
+      runLogger(root);
+      git(root, "commit", "-q", "-am", "T-2");
+
+      git(root, "switch", "-q", "main");
+      git(root, "merge", "-q", "--no-edit", "task/T-1");
+      // TASKS.md se v obou větvích mění na jiném řádku, LOGS.md na stejném
+      // místě - bez merge=union by tenhle merge skončil konfliktem.
+      git(root, "merge", "-q", "--no-edit", "task/T-2");
+
+      const rows = logRows(root);
+      expect(rows).toHaveLength(2);
+      expect(rows.join("\n")).toContain("| T-1 | ready | in-progress |");
+      expect(rows.join("\n")).toContain("| T-2 | ready | in-progress |");
+    });
+
+    it("treats a task missing from the last commit as new", () => {
+      const root = createGitFixture("## T-1 Example\nStav: [x] done\n");
+      writeFileSync(
+        path.join(root, "TASKS.md"),
+        "## T-1 Example\nStav: [x] done\n## T-2 Next\nStav: [~] in progress\n",
+        "utf8",
+      );
+      runLogger(root);
+
+      const rows = logRows(root);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toContain("| T-2 | new | in-progress | codex |");
+    });
   });
 });

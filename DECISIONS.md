@@ -11,9 +11,8 @@ hrozí tak, že je někdo v dobré víře "opraví" zpátky.
 ## D-1 Role appky jsou obecný `string[]`
 Rozhodnutí: `User.roles` je Postgres `string[]` a appka si vlastní role
 definuje jako konstanty v `src/types/roles.ts` (`APP_ROLES`, výchozí
-`admin`/`member`), ne jako pevný `admin`/`evaluator`/`author` enum
-zadrátovaný do Prisma schématu, jak to má `projects-v1-app`, ze kterého
-je tahle šablona vytěžená.
+`admin`/`member`), ne jako pevný enum rolí zadrátovaný do Prisma
+schématu, jak to měla původní appka, ze které šablona vznikla.
 
 Důvod: šablona je základ pro appky s různými potřebami rolí (další dvě
 plánované appky nemusí potřebovat stejnou trojici jako správa
@@ -24,18 +23,15 @@ Důsledek: `ROLE_HIERARCHY`/`ROLE_CLAIMS` v `src/types/roles.ts` jsou
 místo, kde konkrétní appka role přejmenuje/rozšíří — ne migrace databáze.
 `RoleChecker.hasRoleOrHigher` je jediný správný způsob kontroly hierarchie,
 ruční `user.roles.includes(...)` bez ohledu na hierarchii je regrese ke
-vzoru, který `projects-v1-app` historicky měl rozbitý (viz jeho
-`DECISIONS.md`, D-3).
+vzoru, který se v původní appce už jednou ukázal jako chybný.
 
 ## D-2 `@tanstack/react-query` je nový standard pro fetch/mutaci jedné entity, DataTable zůstává samostatně (2026-10-11)
 
 Rozhodnutí: appky postavené na šabloně mají k dispozici
 `@tanstack/react-query` (`QueryProvider` v root layoutu) jako výchozí
 vzor pro detail/editaci/vytvoření/mazání jedné entity, místo ručního
-`useState(data/loading/error)` + `fetch` v `useEffect`, jak to dělá
-`projects-v1-app` všude (nikdy tam zavedeno, viz jeho `DECISIONS.md`
-D-15 — vědomě odloženo jako nová závislost bez zdůvodnění v tamním
-kontextu). `DataTable`'s vlastní list-fetching (server-side sort/filter/
+`useState(data/loading/error)` + `fetch` v `useEffect`, jak to dělala
+původní appka všude. `DataTable`'s vlastní list-fetching (server-side sort/filter/
 pagination přes `dataFetcher`) se React Query **nenahrazuje** — zůstává
 na svém vlastním `onMountRefresh`/`tableRefreshRef` mechanismu.
 
@@ -53,22 +49,20 @@ samostatná mutace) jde přes `src/hooks/queries/<entita>.ts`
 řádku v tabulce, musí stále zavolat `tableRefreshRef.current?.()` —
 `invalidateQueries` samo o sobě tabulku nerefreshne.
 
-## D-3 Pozvání/import uživatelů (z `projects-v1-app`) se do šablony nepřenáší (2026-10-11)
+## D-3 Pozvání a hromadný import uživatelů nejsou součástí šablony (2026-10-11)
 
-Rozhodnutí: `/users/invite`, `/users/import` a podkladové
-`/api/v1/users/invite`/`/api/v1/oauth/users` z `projects-v1-app` nejsou
-v šabloně vůbec — ani jako neaktivní kostra.
+Rozhodnutí: pozvání uživatelů (`/users/invite`), hromadný import
+(`/users/import`) ani podkladová API (`/api/v1/users/invite`,
+`/api/v1/oauth/users`) nejsou v šabloně vůbec — ani jako neaktivní kostra.
 
-Důvod: obě featury řeší specifický scénář `projects-v1-app` (hromadné
-zavedení studentů/hodnotitelů na začátku školního roku, propojené se
-SharePoint zjišťováním Entra ID) — výslovné rozhodnutí uživatele
-("Odstranit z core-app") při prvním zprovoznění šablony, ne jen dočasné
-odložení.
+Důvod: obě funkce řeší specifický scénář jedné appky (hromadné zavedení
+studentů a hodnotitelů na začátku školního roku, propojené se SharePoint
+zjišťováním Entra ID) — výslovné rozhodnutí uživatele („Odstranit
+z core-app“) při prvním zprovoznění šablony, ne jen dočasné odložení.
 
 Důsledek: appka postavená na šabloně, která tuhle funkci potřebuje, ji
-staví znovu podle vlastních potřeb (ne kopií z `projects-v1-app`, kde je
-navíc propletená s SharePointem) — v šabloně po ní nezůstal žádný
-odkaz/mrtvý kód k navázání.
+staví podle vlastních potřeb — v šabloně po ní nezůstal žádný odkaz ani
+mrtvý kód k navázání.
 
 ## D-4 Profil a role při přihlášení z `/connect/userinfo`, ne z admin API (2026-10-12)
 
@@ -82,8 +76,7 @@ nedohledává uživatele podle e-mailu. `syncUserProfile` doplní e-mail,
 pokud v DB chybí. Přihlášení admin API OAuth serveru (`client_credentials`
 + `IdentityServerApi`) nepoužívá.
 
-Důvod: chyby nalezené v `evaluation-v1-app` (její `SISTER-REPOS.md`,
-S-2 až S-4). Duende do ID tokenu standardně nedává e-mail, jméno ani
+Důvod: chyby nalezené v odvozené appce. Duende do ID tokenu standardně nedává e-mail, jméno ani
 vlastní claimy. Bez oprávnění na admin API se tak uživatel uložil bez
 rolí, e-mailu a jména, nový uživatel dostal role až při druhém
 přihlášení a uživatel bez e-mailu je nedostal do session nikdy. Chyba se
@@ -108,7 +101,7 @@ schématu jdou přes `prisma migrate dev`.
 
 Důvod: `docs/deployment.md` a `scripts/README.md` při nasazení spouští
 `prisma migrate deploy`, který bez migrací nic nevytvoří. Produkční DB
-by zůstala bez tabulek (`evaluation-v1-app`, `SISTER-REPOS.md` S-5).
+by zůstala bez tabulek (nalezeno při prvním nasazení odvozené appky).
 
 Důsledek: appka postavená na šabloně dostane migraci `init` a na ni
 navazuje vlastními migracemi.
@@ -126,8 +119,8 @@ analytika v `.env` zapnutá. `public/.well-known/security.txt` (RFC 9116)
 a matcher proxy vyjímá `.well-known`, jinak by ho přesměroval pod `/cs`.
 
 Důvod: pentest školních systémů (2026-09, nálezy 6.3.3, 6.4.1–6.4.8,
-6.5.3; `evaluation-v1-app` `SISTER-REPOS.md` S-13, S-14). Oprava je
-převzatá z `projects-v1-app` se dvěma rozdíly. CSP je i v request hlavičce,
+6.5.3). Oprava vychází z odvozené appky, kde vznikla nejdřív, se dvěma
+rozdíly. CSP je i v request hlavičce,
 jak to popisuje návod Next.js. `upgrade-insecure-requests` se posílá jen pro
 request, který přišel přes HTTPS (přímo nebo podle `x-forwarded-proto`).
 Na HTTP serveru totiž přepíše i interní navigaci a prefetch na
@@ -150,14 +143,13 @@ Service worker, offline cache ani push notifikace nemá. Proxy vynechává
 `manifest.webmanifest` z jazykového přesměrování.
 
 Důvod: zadání uživatele - stačí instalovatelnost, notifikace ne
-(`projects-v1-app` má navíc Web Push, commit `ce2e34c`). Chrome ani
+(Web Push má jen odvozená appka, která ho potřebuje). Chrome ani
 Safari service worker pro instalaci nevyžadují, takže odpadne i výjimka
-`worker-src` v CSP. Proti `projects-v1-app` jsou maskable ikony
-samostatné soubory s bezpečným okrajem, protože Android maskable ikonu
+`worker-src` v CSP. Maskable ikony jsou samostatné soubory s bezpečným okrajem, protože Android maskable ikonu
 ořízne do kruhu.
 
 Důsledek: appka, která bude chtít push notifikace nebo offline režim,
-převezme `public/sw.js` a navazující kód z `projects-v1-app`. Musí pak
+doplní service worker (`public/sw.js`) a navazující kód. Musí pak
 přidat `sw.js` do výjimek matcheru v `src/proxy.ts` a `worker-src 'self'`
 do `buildCsp`. Instalovatelnost hlídá `tests/unit/manifest.test.ts`
 (ikony z manifestu musí existovat a mít deklarovanou velikost).
@@ -175,10 +167,10 @@ pokud postranní menu není vidět. Postranní menu se ukazuje od 48em
 (Mantine `sm`), stejně jako končí mobil. Odkazy v obou menu nesou jazyk
 aktuální stránky (`localizedHref`).
 
-Důvod: převzato z `evaluation-v1-app` (`SISTER-REPOS.md` S-24, S-25,
-S-27). Šablona dřív neměla hlavní menu a mezi 768 a 992 px byly podsekce
-administrace nedostupné (postranní menu skryté od `md`, šuplík až pod
-768 px). Při ověření se našly dvě další chyby (S-28, S-29). S krátkým menu
+Důvod: převzato z odvozené appky. Šablona dřív neměla hlavní menu a mezi
+768 a 992 px byly podsekce administrace nedostupné (postranní menu skryté
+od `md`, šuplík až pod 768 px). Při ověření se našly dvě další chyby.
+S krátkým menu
 šablony zůstávala hlavička pod 768 px bez burgeru, takže podsekce zase
 nebyly dostupné. Odkazy menu bez jazyka přepínaly anglicky prohlížejícího
 uživatele zpět do češtiny.
@@ -224,3 +216,28 @@ nebo testů. Copilot hooky ve VS Code jsou ve Preview; Codex před spuštěním
 projektových hooků vyžaduje jejich kontrolu a důvěru.
 
 Schválení: uživatel v chatu dne 2026-11-02.
+
+## D-11 Větev pro každý úkol, šablona jako centrum odvozených repozitářů (2026-11-03)
+Rozhodnutí: agent při samostatné práci na úkolu založí větev
+`task/T-N-kratky-popis` a commituje jen do ní. Do hlavní větve slučuje
+(`git merge --no-ff`) až po úspěšných kontrolách a výslovném souhlasu
+uživatele, jinak ho jen vyzve. Push a přepis historie zůstávají jen na
+pokyn. Evidence chyb sdílených s odvozenými repozitáři je jediná,
+v `SISTER-REPOS.md` této šablony; odvozené repozitáře na ni odkazují.
+Živé dokumenty, skills a kód šablony nejmenují konkrétní projekty (hlídá
+`tests/unit/agentDocs.test.ts`). Stavový log bere předchozí stav úkolu
+z `HEAD:TASKS.md` a zapisuje jen necommitnutou změnu; `LOGS.md` se
+slučuje metodou `merge=union`. Claude hook navíc běží po Edit/Write.
+
+Důvod: metodika (práce ve větvi, malé commity) odporovala zákazu commitů
+v `AGENTS.md`. Oponentura T-1 ukázala, že log stavů by s větvemi
+zapisoval falešné přechody při `checkout`/`pull`/`merge` a `LOGS.md` by
+konfliktoval při každém merge (ověřeno: bez `merge=union` konflikt).
+Šablona má být odrazovým můstkem, ne pokračováním jednoho projektu.
+
+Důsledek: hlavní větev mění jen merge schválený uživatelem. Mnohokrokový
+necommitnutý přechod se v logu zapíše jako přechod z commitnutého stavu
+(mezikroky bez commitu se nezachytí). Nová appka na šabloně se zapíše do
+tabulky v `SISTER-REPOS.md`.
+
+Schválení: uživatel v chatu dne 2026-11-03.

@@ -25,7 +25,7 @@ function userColumns(): Set<string> {
 }
 
 // Názvy standardních claimů odpovídají skutečné odpovědi /connect/userinfo
-// z oauth.pslib.cz (ověřeno v evaluation-v1-app), hodnoty jsou smyšlené.
+// z oauth.pslib.cz (ověřeno na skutečném serveru), hodnoty jsou smyšlené.
 // Role-claimy podle ROLE_CLAIMS šablony; claim jiné appky se ignoruje.
 const userinfo = {
   sub: "d9d5bba1-0000-0000-0000-000000000000",

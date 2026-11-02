@@ -2,8 +2,7 @@
 -- role than the app's own DB user (e.g. `postgres`, because they were
 -- created by a superuser connection during initial setup), `prisma
 -- migrate deploy` fails with "must be owner of table X" on every
--- migration that touches them. Root cause found in projects-v1-app, see
--- its dev_notes/document_extraction.md and dev_notes/documents.md.
+-- migration that touches them.
 --
 -- This lists the template's own tables (NextAuth standard tables + User).
 -- An app built on this template that adds its own models must regenerate
