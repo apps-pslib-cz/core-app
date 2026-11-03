@@ -52,7 +52,8 @@ z ní, co agent může dělat sám a co jen navrhnout. V tomto projektu typicky:
   force-push, změna oprávnění uživatelů.
 
 Pro C a D vždy nejdřív plán ke schválení, ne přímou implementaci — viz
-`AGENTS.md`, sekce Omezení (git operace, migrace, závislosti).
+`AGENTS.md`, sekce „Třída rizika“ a Omezení (git operace, migrace,
+závislosti).
 
 ## Obecná pravidla
 
