@@ -241,3 +241,12 @@ necommitnutý přechod se v logu zapíše jako přechod z commitnutého stavu
 tabulky v `SISTER-REPOS.md`.
 
 Schválení: uživatel v chatu dne 2026-11-03.
+
+## D-12 Vynucení hranic agenta v Claude Code (2026-11-04)
+Rozhodnutí: Pravidla z `AGENTS.md`, která mají platit bezvýjimečně, drží v Claude Code mechanismus, ne jen text. `.claude/settings.json` zakazuje čtení `.env` souborů (mimo `.env.example`) a ruční úpravy `src/generated` a `prisma/migrations`; `git push`, `merge`, `reset`, `rebase`, `commit --amend` a `branch -D` vyžadují potvrzení. Hook `scripts/guard-main-branch.mjs` (PreToolUse, `Bash`) zablokuje `git commit`, který by skončil na `main`/`master`.
+
+Důvod: Metodika (kapitola 5) i `CONVENTIONS.md` říkají, že psané pravidlo agenta jen nasměruje a zastavit ho musí kontrola. Jediné hooky v projektu ale jen zapisovaly log. Zákaz commitu do hlavní větve, push a ruční zásahy do migrací držel pouze text, který agent v dlouhé relaci může přehlédnout.
+
+Důsledek: Platí jen v Claude Code. Copilot a Codex jsou kryty jen textem (IDEA-004); hooky nejsou mezi nástroji přenositelné (příloha A metodiky). Zákaz čtení `.env` se týká nástroje Read, ne `cat` v shellu, takže to není sandbox. Hook je záměrně "fail open" (vlastní chyba nezablokuje práci) a obejít ho jde skriptem, který commit provede sám. Potvrzení u `git merge` je záměr: slučování do hlavní větve zůstává rozhodnutím člověka (D-11). Hook má jednotkové testy (AC-12); že pravidla `permissions` fungují v běžícím Claude Code, ověřuje ručně AC-13.
+
+Schválení: uživatel v chatu dne 2026-11-04 (pokyn "rovnou oprav core-app" po revizi šablony).
