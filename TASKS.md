@@ -35,3 +35,13 @@ nejsou (ručně ověřeno, že vložený odkaz test shodí). `npx tsc`,
 v odvozených repech tsc a vitest. Neověřeno: Codex/Copilot hooky po
 změně skriptu.
 Stav: [x] hotovo
+
+## T-3
+- nazev: Vynucení hranic agenta, třídy rizika a testy autorizace
+Cíl: Pravidla z `AGENTS.md`, která mají platit bezvýjimečně, hlídá nástroj (Claude Code), třídy rizika A-D jsou v `AGENTS.md` a skillu a AC-2/AC-3 mají jednotkové testy.
+Splňuje: AC-12, AC-13, AC-14; podklady k AC-2 a AC-3
+Závisí na: T-2
+Riziko: B (nastavení oprávnění agenta a hook; produkční kód aplikace se nemění)
+Hotovo, když: `npx vitest run`, `npx tsc --noEmit -p .`, `npm run lint` a `npm run agent:skills:check` procházejí, `SISTER-REPOS.md` eviduje nálezy a diff je zkontrolován.
+Stav: [~] rozpracováno
+Poznámky: IDEA-003; Copilot a Codex zatím bez vynucení - IDEA-004.
