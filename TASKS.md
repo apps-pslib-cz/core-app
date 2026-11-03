@@ -37,11 +37,5 @@ změně skriptu.
 Stav: [x] hotovo
 
 ## T-3
-- nazev: Vynucení hranic agenta, třídy rizika a testy autorizace
-Cíl: Pravidla z `AGENTS.md`, která mají platit bezvýjimečně, hlídá nástroj (Claude Code), třídy rizika A-D jsou v `AGENTS.md` a skillu a AC-2/AC-3 mají jednotkové testy.
-Splňuje: AC-12, AC-13, AC-14; podklady k AC-2 a AC-3
-Závisí na: T-2
-Riziko: B (nastavení oprávnění agenta a hook; produkční kód aplikace se nemění)
-Hotovo, když: `npx vitest run`, `npx tsc --noEmit -p .`, `npm run lint` a `npm run agent:skills:check` procházejí, `SISTER-REPOS.md` eviduje nálezy a diff je zkontrolován.
-Stav: [~] rozpracováno
-Poznámky: IDEA-003; Copilot a Codex zatím bez vynucení - IDEA-004.
+Hotovo (2026-11-04): IDEA-003, AC-12, AC-14, D-12 a podklady k AC-2/AC-3; AC-13 čeká na ruční ověření v Claude Code. Ve větvi `task/T-3-vynuceni-a-rizika`. `permissions` a hook `scripts/guard-main-branch.mjs` v `.claude/settings.json` (`tests/unit/guardMainBranch.test.ts`, 6 testů); sekce „Třída rizika“ v `AGENTS.md` a ve skillu (test v `agentDocs.test.ts`); `tests/unit/apiAuthorization.test.ts` (24 testů). Ověřeno na Linuxové kopii zdrojů: `npx vitest run` (80 testů), `npx tsc --noEmit -p .`, `npm run lint`, `npm run agent:skills:check`; mutacemi (odstranění kontroly vlastního profilu, role u DELETE, `requireRole`, zákazu přidělení `admin`, ochrany `main`, třídy D v `AGENTS.md`) ověřeno, že testy selžou. Neověřeno: `permissions` a hook v běžícím Claude Code (AC-13), živé volání API (`curl`), běh na Windows; Copilot a Codex zůstávají bez vynucení (IDEA-004). Nález mimo úkol: `npm ci` selže s npm 10 (S-35).
+Stav: [x] hotovo

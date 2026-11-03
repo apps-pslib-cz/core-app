@@ -20,7 +20,7 @@ neodvozují.
 ## IDEA-003
 - Nazev: Vynucení hranic agenta a testy autorizace
 - Navrh: Pravidla, která mají platit bezvýjimečně (zákaz commitu do hlavní větve, čtení `.env*`, ruční zásahy do generovaného klienta a migrací, push a přepis historie bez potvrzení), nesmí zůstat jen v textu `AGENTS.md`. Třídy rizika A-D patří do `AGENTS.md`, který se načítá vždy. Kritéria AC-2 a AC-3 potřebují důkaz v testech.
-- Stav: rozpracováno
+- Stav: hotovo
 - Vazby: [T-3](TASKS.md#t-3)
 
 ## IDEA-004
