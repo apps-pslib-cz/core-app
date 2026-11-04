@@ -98,4 +98,15 @@ describe("agent workflow documentation", () => {
       });
     expect(offenders).toEqual([]);
   });
+
+  it("keeps the risk classes in the always-loaded AGENTS.md and in the canonical skill", () => {
+    const agents = readProjectFile("AGENTS.md");
+    const skill = readProjectFile(".agents/skills/agentic-engineering/SKILL.md");
+    const section = /^## Třída rizika\n([\s\S]*?)(?=^## )/m.exec(agents)?.[1] ?? "";
+
+    for (const riskClass of ["A", "B", "C", "D"]) {
+      expect(section, `třída ${riskClass}`).toContain(`- **${riskClass}** (`);
+    }
+    expect(skill).toContain("Třída rizika");
+  });
 });

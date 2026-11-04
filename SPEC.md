@@ -67,9 +67,12 @@ nejsou součástí tohoto souboru, patří do nového `SPEC.md`.
   záznam a přidělí roli podle OAuth claimů.
 - [ ] AC-2: Akce vyžadující roli `admin` není proveditelná ani přímým
   voláním API bez této role — autorizace je vynucena na API route, UI
-  kontrola je jen pohodlí.
+  kontrola je jen pohodlí. Server-side vynucení pokrývají jednotkové testy
+  `tests/unit/apiAuthorization.test.ts` (T-3); živé ověření `curl` proti
+  běžícímu serveru zbývá.
 - [ ] AC-3: Uživatel bez role `admin` smí upravit jen vlastní profil, ne
-  cizí, ani přímým voláním API.
+  cizí, ani přímým voláním API. Server-side vynucení pokrývají jednotkové
+  testy `tests/unit/apiAuthorization.test.ts` (T-3); živé ověření zbývá.
 - [ ] AC-4: Nepřihlášený návštěvník na chráněné stránce dostane
   přihlašovací/chybovou stránku, ne prázdný výpis nebo pád.
 - [x] AC-5: Společné instrukce mají jediný zdroj v `AGENTS.md`; `CLAUDE.md`
@@ -94,6 +97,19 @@ nejsou součástí tohoto souboru, patří do nového `SPEC.md`.
 - [x] AC-11: Chyby sdílené s odvozenými repozitáři se evidují na jednom
   místě (`SISTER-REPOS.md` v tomto repu); živé dokumenty, skills a kód
   šablony neodkazují na konkrétní dřívější projekty.
+
+- [x] AC-12: `git commit` na hlavní větvi (`main`/`master`) zablokuje hook
+  `scripts/guard-main-branch.mjs` (Claude Code); commit na větvi úkolu a
+  `git switch -c ... && git commit` povolí a při vlastní chybě nikdy
+  nezablokuje práci (`tests/unit/guardMainBranch.test.ts`, D-12).
+- [ ] AC-13: Pravidla `permissions` v `.claude/settings.json` fungují v
+  běžícím Claude Code: čtení `.env` a úprava `src/generated` a
+  `prisma/migrations` jsou odepřeny, `git push`, `merge`, `reset`, `rebase`
+  a `commit --amend` vyžadují potvrzení. Ověřit ručně (`/permissions` a
+  pokus o zakázanou akci).
+- [x] AC-14: Třídy rizika A-D jsou v `AGENTS.md` (načítá se vždy) i v
+  kanonickém skillu `agentic-engineering`; hlídá je
+  `tests/unit/agentDocs.test.ts`.
 
 ## 6. Mimo rozsah
 
@@ -126,3 +142,8 @@ spouštějí společný `scripts/log-task-status.mjs`.
 předchozí a nový stav a nástroj, který změnu zjistil. Neobsahuje prompty,
 výstupy nástrojů ani osobní údaje a nenahrazuje rozhodnutí člověka ani důkaz
 akceptačního kritéria.
+
+Hranice, které mají platit bezvýjimečně, vynucuje v Claude Code
+`.claude/settings.json` (oprávnění) a `scripts/guard-main-branch.mjs`
+(zákaz commitu do hlavní větve), viz D-12. Copilot a Codex jsou zatím
+kryty jen textem v `AGENTS.md` (IDEA-004).

@@ -33,7 +33,7 @@ Stav: core-app [ ] · projects-v1-app [ ] · internship-v5-app [ ] · evaluation
 poznámka k opravě v každém repozitáři (datum, jak, čím ověřeno).
 Záznam se smaže, až jsou všechna políčka `[x]` nebo `[-]` - historie
 zůstane v gitu. Čísla `S-N` se nepřidělují znovu; nový záznam dostane
-číslo o jedna vyšší než nejvyšší dosud použité (zatím S-32).
+číslo o jedna vyšší než nejvyšší dosud použité (zatím S-36).
 
 Záznamy uzavřené před přesunem evidence sem (S-1 až S-29, na které
 odkazují komentáře v kódu odvozených appek) jsou v historii gitu
@@ -117,3 +117,54 @@ s původním skriptem selže. `npx vitest run` 50/50, tsc, skript na vlastním
 Stav: core-app [x] · projects-v1-app [ ] · internship-v5-app [?] · evaluation-v1-app [x]
 `projects-v1-app`: převzít nový skript a test 1:1 (formát `TASKS.md` tam
 funguje i se starým, jde jen o shodu se šablonou).
+
+### S-33 Pravidla agenta bez vynucení (2026-11-04)
+Popis: `AGENTS.md` zakazuje commit do hlavní větve, čtení `.env` a ruční
+zásahy do generovaného klienta a migrací, ale `.claude/settings.json` měl
+jen logovací hooky. Pravidlo drželo pouze text, který agent v dlouhé relaci
+může přehlédnout; `git push`, `reset` ani `rebase` nevyžadovaly potvrzení.
+Místo: `.claude/settings.json`, `AGENTS.md` (sekce Omezení) - `core-app`;
+odvozené repozitáře dědí stejnou kostru (neověřeno).
+Oprava (`core-app`, T-3, 2026-11-04): `permissions` (deny/ask) a hook
+`scripts/guard-main-branch.mjs` v `.claude/settings.json`, test
+`tests/unit/guardMainBranch.test.ts` (ověřeno mutací), D-12. Jen Claude Code;
+Copilot a Codex viz IDEA-004. Pravidla `permissions` ještě nejsou ověřena
+v běžícím Claude Code (AC-13).
+Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
+
+### S-34 Třídy rizika chybí v `AGENTS.md` (2026-11-04)
+Popis: Třídy A-D (metodika, kapitola 6) byly jen v `CONVENTIONS.md` a
+v metodice. `AGENTS.md` ani skill je nezmiňovaly, takže je agent v praxi
+nepoužil. `CONVENTIONS.md` navíc odkazoval na `AGENTS.md`, sekci Omezení,
+kde plán ke schválení pro třídy C a D nebyl.
+Místo: `AGENTS.md`, `.agents/skills/agentic-engineering/SKILL.md`,
+`CONVENTIONS.md` (Třída rizika) - `core-app`; odvozené repozitáře s vlastním
+`AGENTS.md`.
+Oprava (`core-app`, T-3, 2026-11-04): sekce „Třída rizika“ v `AGENTS.md`,
+věta ve skillu (zrcadlo přes `npm run agent:skills:sync`), opravený odkaz
+v `CONVENTIONS.md`, test v `tests/unit/agentDocs.test.ts` (ověřeno mutací).
+Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
+
+### S-35 Autorizace API bez testů (2026-11-04)
+Popis: V `tests/unit` nebyl žádný test `RoleChecker`, `requireAuthentication`
+ani autorizace route handlerů uživatelů. Kritéria AC-2 a AC-3 ve `SPEC.md`
+tak neměla žádný důkaz a regrese (např. odstranění kontroly vlastního profilu
+v `PUT /api/v1/users/[id]`) by prošla `tsc` i `vitest`.
+Místo: `tests/unit/` - `core-app`; odvozené repozitáře s vlastními API route.
+Oprava (`core-app`, T-3, 2026-11-04): `tests/unit/apiAuthorization.test.ts`
+(24 testů; mutacemi ověřeno odstranění kontroly vlastního profilu, role u
+DELETE, `requireRole` i zákazu přidělení `admin`). Je to vzor: odvozený
+repozitář přidá stejné případy pro vlastní routy. Živé ověření `curl` zbývá.
+Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
+
+### S-36 `npm ci` selže s npm 10 (2026-11-04)
+Popis: `package-lock.json` (lockfileVersion 3) projde `npm ci` s npm 11, ale
+s npm 10.9.9 končí `EUSAGE ... Missing: typescript@5.9.3 from lock file`.
+`docs/deployment.md` (krok „Instalace závislostí“) instaluje přes `npm ci`,
+takže server s npm 10 instalaci nedokončí. `npm install` s npm 10 projde.
+Verzi npm na produkčním serveru jsem neověřoval.
+Místo: `package-lock.json`, `docs/deployment.md` - `core-app`; odvozené
+repozitáře ze stejné šablony (neověřeno).
+Oprava: neopraveno. Návrh: v `docs/deployment.md` uvést minimální verzi npm
+(11), nebo lockfile znovu vygenerovat s npm 10 a ověřit `npm ci` v obou verzích.
+Stav: core-app [ ] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]

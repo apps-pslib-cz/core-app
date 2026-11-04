@@ -68,6 +68,21 @@ npx playwright test            # e2e (tests/e2e), zatím prázdné
    na PID, smazat scratch soubory) - needrž běžící procesy ani
    dočasný kód po sobě.
 
+## Třída rizika
+
+Před netriviální změnou urči třídu rizika (podrobnosti v `CONVENTIONS.md`,
+„Třída rizika“) a zapiš ji do úkolu jako `Riziko:`. Nejsi-li si jistý, zvol
+vyšší třídu.
+
+- **A** (typo v dokumentaci, přejmenování beze změny chování) - uprav,
+  spusť lokální kontroly, výsledný diff schvaluje člověk.
+- **B** (běžná funkcionalita: API route, komponenta, validace) -
+  implementuj ve větvi úkolu a ověř; u větší změny nejdřív stručný plán.
+- **C** (nová závislost, autorizace, Prisma migrace, veřejný tvar API,
+  `.env`/OAuth) - nejdřív plán ke schválení, implementuj až po souhlasu.
+- **D** (nasazení, mazání dat, změna oprávnění, force-push) - jen analýza
+  a návrh postupu; každý nevratný krok potvrzuje člověk zvlášť.
+
 ## Práce ve větvi úkolu
 
 1. Samostatnou práci na úkolu (`T-N` v `TASKS.md`) začni v nové větvi
@@ -96,6 +111,13 @@ u sebe. Opravu v jiném repozitáři dělá práce v tom repozitáři, ne odsud.
 
 ## Omezení
 
+- Tvrdé hranice nejsou jen text: `.claude/settings.json` zakazuje čtení
+  `.env` souborů a ruční zásahy do `src/generated` a `prisma/migrations`,
+  vyžaduje potvrzení pro `git push`, `merge`, `reset`, `rebase`,
+  `commit --amend` a hook `scripts/guard-main-branch.mjs` blokuje
+  `git commit` na `main`/`master` (D-12). Platí to jen v Claude Code - pro
+  Copilot a Codex je tahle sekce zatím jedinou ochranou (IDEA-004).
+  Není to sandbox: nespoléhej, že nástroj pravidlo vynutí za tebe.
 - **Commituj jen do větve úkolu (`task/...`), nikdy přímo do hlavní
   větve.** Merge do hlavní větve jen po výslovném souhlasu uživatele.
   Nikdy nepushuj, force-pushuj ani neměň historii (rebase, amend,
