@@ -114,9 +114,12 @@ v řádcích `LOGS.md`. Zpětně kompatibilní. Test `reads tasks under stage
 headings and IDs with a letter suffix` v `tests/unit/taskStatusLog.test.ts`,
 s původním skriptem selže. `npx vitest run` 50/50, tsc, skript na vlastním
 `TASKS.md` bez zápisu.
-Stav: core-app [x] · projects-v1-app [ ] · internship-v5-app [?] · evaluation-v1-app [x]
+Stav: core-app [x] · projects-v1-app [x] · internship-v5-app [?] · evaluation-v1-app [x]
 `projects-v1-app`: převzít nový skript a test 1:1 (formát `TASKS.md` tam
 funguje i se starým, jde jen o shodu se šablonou).
+`projects-v1-app` (2026-11-04, T-56, větev `task/T-56-sync-core-app`): skript,
+test a `.gitattributes` převzaty 1:1; `npx vitest run` 491/491, živě ověřeno,
+že zápis pro neměnný `TASKS.md` nic nepřidá.
 
 ### S-33 Pravidla agenta bez vynucení (2026-11-04)
 Popis: `AGENTS.md` zakazuje commit do hlavní větve, čtení `.env` a ruční
@@ -130,7 +133,8 @@ Oprava (`core-app`, T-3, 2026-11-04): `permissions` (deny/ask) a hook
 `tests/unit/guardMainBranch.test.ts` (ověřeno mutací), D-12. Jen Claude Code;
 Copilot a Codex viz IDEA-004. Pravidla `permissions` ještě nejsou ověřena
 v běžícím Claude Code (AC-13).
-Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
+Stav: core-app [x] · projects-v1-app [x] · internship-v5-app [?] · evaluation-v1-app [?]
+`projects-v1-app` (2026-11-04, T-56): `.claude/settings.json` (permissions + hook), `guard-main-branch.mjs` a testy převzaty 1:1; ověřeno testy a živě na `main` (blokace) i na větvi úkolu (povolení). Běžící Claude Code zůstává AC-13.
 
 ### S-34 Třídy rizika chybí v `AGENTS.md` (2026-11-04)
 Popis: Třídy A-D (metodika, kapitola 6) byly jen v `CONVENTIONS.md` a
@@ -143,7 +147,8 @@ Místo: `AGENTS.md`, `.agents/skills/agentic-engineering/SKILL.md`,
 Oprava (`core-app`, T-3, 2026-11-04): sekce „Třída rizika“ v `AGENTS.md`,
 věta ve skillu (zrcadlo přes `npm run agent:skills:sync`), opravený odkaz
 v `CONVENTIONS.md`, test v `tests/unit/agentDocs.test.ts` (ověřeno mutací).
-Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
+Stav: core-app [x] · projects-v1-app [x] · internship-v5-app [?] · evaluation-v1-app [?]
+`projects-v1-app` (2026-11-04, T-56): sekce „Třída rizika“ v `AGENTS.md` převzata; věta ve skillu se nepřevzala - tahle appka skill `agentic-engineering` nemá.
 
 ### S-35 Autorizace API bez testů (2026-11-04)
 Popis: V `tests/unit` nebyl žádný test `RoleChecker`, `requireAuthentication`
@@ -155,7 +160,8 @@ Oprava (`core-app`, T-3, 2026-11-04): `tests/unit/apiAuthorization.test.ts`
 (24 testů; mutacemi ověřeno odstranění kontroly vlastního profilu, role u
 DELETE, `requireRole` i zákazu přidělení `admin`). Je to vzor: odvozený
 repozitář přidá stejné případy pro vlastní routy. Živé ověření `curl` zbývá.
-Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
+Stav: core-app [x] · projects-v1-app [ ] · internship-v5-app [?] · evaluation-v1-app [?]
+`projects-v1-app` (2026-11-04, T-56): zatím neřešeno - šablonový test je pro model `roles: string[]`, appka má booleany; přepsání na vlastní routy je samostatný úkol.
 
 ### S-36 `npm ci` selže s npm 10 (2026-11-04)
 Popis: `package-lock.json` (lockfileVersion 3) projde `npm ci` s npm 11, ale
