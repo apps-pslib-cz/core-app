@@ -117,6 +117,39 @@ describe("task status log", () => {
     expect(log).not.toContain("T-1");
   });
 
+  it("reads tasks under stage headings and IDs with a letter suffix", () => {
+    const root = createFixture(
+      [
+        "# Úkoly",
+        "Stav: [x] ignored",
+        "## Etapa 1",
+        "### T-6 Parent",
+        "Stav: [x] done",
+        "### T-6a Part",
+        "#### Poznámky",
+        "Stav: [~] in progress",
+        "## Etapa 2",
+        "Stav: [x] ignored",
+        "### T-7 Next",
+        "Stav: [ ] ready",
+        "",
+      ].join("\n"),
+    );
+
+    runLogger(root);
+
+    const rows = readFileSync(path.join(root, "LOGS.md"), "utf8");
+    expect(rows).toContain("| T-6 | new | done | codex |");
+    expect(rows).toContain("| T-6a | new | in-progress | codex |");
+    expect(rows).toContain("| T-7 | new | ready | codex |");
+    expect(rows.match(/\| T-\d+[a-z]? \|/g)).toHaveLength(3);
+
+    // Druhý běh bez změny nic nepřidá - i T-6a se pozná zpět z logu.
+    writeFileSync(path.join(root, "TASKS.md"), readFileSync(path.join(root, "TASKS.md"), "utf8"), "utf8");
+    runLogger(root);
+    expect(readFileSync(path.join(root, "LOGS.md"), "utf8").match(/\| T-\d+[a-z]? \|/g)).toHaveLength(3);
+  });
+
   it("rejects tasks with missing or duplicate status fields", () => {
     const missingStatusRoot = createFixture("## T-3 Missing status\nCíl: incomplete\n");
     expect(() => runLogger(missingStatusRoot)).toThrow();
