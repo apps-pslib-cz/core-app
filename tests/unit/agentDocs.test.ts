@@ -102,12 +102,12 @@ describe("agent workflow documentation", () => {
   it("keeps the risk classes in the always-loaded AGENTS.md and in the canonical skill", () => {
     const agents = readProjectFile("AGENTS.md");
     const skill = readProjectFile(".agents/skills/agentic-engineering/SKILL.md");
-    const section = /^## Třída rizika\n([\s\S]*?)(?=^## )/m.exec(agents)?.[1] ?? "";
+    const section = /^## Risk class\n([\s\S]*?)(?=^## )/m.exec(agents)?.[1] ?? "";
 
     for (const riskClass of ["A", "B", "C", "D"]) {
       expect(section, `třída ${riskClass}`).toContain(`- **${riskClass}** (`);
     }
-    expect(skill).toContain("Třída rizika");
+    expect(skill).toContain("Risk class");
   });
 });
 
@@ -150,7 +150,7 @@ describe("entry commands, model tiers and agent notes (D-13)", () => {
     for (const name of delegates) {
       expect(existsSync(path.join(workspaceRoot, `.claude/agents/${name}.md`)), name).toBe(true);
     }
-    for (const section of ["Třída rizika", "Práce ve větvi úkolu", "Souhlas a důkaz", "Úrovně modelů a jazyk", "Výstup"]) {
+    for (const section of ["Risk class", "Task branch", "Consent and evidence", "Model tiers and language", "Output"]) {
       expect(agents, section).toContain(`\n## ${section}\n`);
     }
   });
@@ -171,10 +171,10 @@ describe("entry commands, model tiers and agent notes (D-13)", () => {
 
   it("documents consent, evidence states, model tiers and stays short in AGENTS.md", () => {
     const agents = readProjectFile("AGENTS.md");
-    for (const phrase of ["**Implementováno**", "**ověřeno**", "**akceptováno**"]) {
+    for (const phrase of ["**Implemented**", "**verified**", "**accepted**"]) {
       expect(agents, phrase).toContain(phrase);
     }
-    expect(agents).toContain("`SPEC.md` nikdy nepřepisuj podle");
+    expect(agents.replace(/\s+/g, " ")).toContain("never edit `SPEC.md` to match the implementation");
     for (const tier of ["silny", "stredni", "lehky", "opus", "sonnet", "haiku"]) {
       expect(agents, tier).toContain(`\`${tier}\``);
     }
@@ -213,6 +213,38 @@ describe("entry commands, model tiers and agent notes (D-13)", () => {
         expect(tools).not.toContain("agent");
       }
     }
+  });
+
+  it("keeps AGENTS.md in English outside code spans, quotes and Czech labels (D-15)", () => {
+    const agents = readProjectFile("AGENTS.md");
+    const prose = agents
+      .slice(agents.indexOf("# core-app"))
+      .replace(/```[\s\S]*?```/g, "")
+      .replace(/`[^`]*`/g, "")
+      .replace(/"[^"]*"/g, "")
+      .replace(/\*\*[^*]*\*\*/g, "")
+      .replace(/SPŠSE a VOŠ Liberec/g, "");
+    expect(prose.match(/[ěščřžýáíéůúťďňĚŠČŘŽÝÁÍÉŮÚŤĎŇ]/g) ?? []).toEqual([]);
+  });
+
+  it("leaves no reference to the retired Czech AGENTS.md section names (D-15)", () => {
+    const retired = [
+      "Spolupráce agentů", "Postup práce", "Třída rizika", "Práce ve větvi úkolu", "Vstupní postupy",
+      "Souhlas a důkaz", "Úrovně modelů a jazyk", "Odvozené repozitáře", "Omezení", "Výstup",
+    ];
+    const files = [
+      ...["discover-project", "plan-increment", "work-task"].flatMap((n) => [
+        `.claude/commands/${n}.md`,
+        `.github/prompts/${n}.prompt.md`,
+      ]),
+      ".claude/agents/task-executor.md",
+      ".agents/skills/agentic-engineering/SKILL.md",
+      "scripts/guard-main-branch.mjs",
+    ];
+    const offenders = files.flatMap((file) =>
+      retired.filter((name) => readProjectFile(file).includes(`"${name}"`)).map((name) => `${file}: ${name}`),
+    );
+    expect(offenders).toEqual([]);
   });
 
   it("keeps AGENT-NOTES.md append-only (merge=union) with well-formed entries", () => {
