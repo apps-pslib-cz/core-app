@@ -37,12 +37,18 @@ neodvozují.
 
 ## IDEA-006
 - Nazev: Anglický AGENTS.md a měření spotřeby tokenů
-- Navrh: Přeložit načítaný `AGENTS.md` (a případně skills) do angličtiny, zachovat české názvy sekcí, na které se odkazují testy, a změřit skutečnou úsporu tokenů před a po. Dokumenty hodnocené učitelem zůstanou česky.
-- Stav: nový
-- Vazby: žádné
+- Navrh: Přeložit načítaný `AGENTS.md` do angličtiny (D-15); dokumenty hodnocené učitelem zůstanou česky. Přeloženo, názvy sekcí jsou anglicky a odkazy na ně přejmenované.
+- Stav: hotovo
+- Vazby: [T-7](TASKS.md#t-7)
 
 ## IDEA-007
 - Nazev: Příkazy a dělba modelů i pro Copilot a Codex
 - Navrh: Copilot: tenké obaly `.github/prompts` nad Claude příkazy (D-14), hotovo. Codex zatím zůstává bez příkazů; ověřit, jak nabízí vstupní postupy a volbu modelu, a doplnit ekvivalent.
 - Stav: rozpracováno
 - Vazby: [T-6](TASKS.md#t-6)
+
+## IDEA-008
+- Nazev: Změřit skutečnou úsporu tokenů po překladu AGENTS.md
+- Navrh: Na větvi před a po překladu porovnat velikost načtených paměťových souborů v Claude Code (`/context`) a případně i spotřebu typické relace. Teprve podle toho rozhodnout, zda přeložit i `CONVENTIONS.md` a skills.
+- Stav: nový
+- Vazby: žádné

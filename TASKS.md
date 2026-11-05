@@ -47,3 +47,14 @@ Stav: [x] hotovo
 ## T-6
 Hotovo (2026-11-05): IDEA-007 (část Copilot), AC-20, D-14. Ve větvi `task/T-6-prikazy-pro-copilot` (z T-5). Obaly `.github/prompts/{discover-project,plan-increment,work-task}.prompt.md` odkazují na `.claude/commands/` jako jediný zdroj a jen mapují nástroje (delegace přes `runSubagent`, bez připnutého modelu); `AGENTS.md`, README, CONVENTIONS, metodika (příloha A), `AGENT-NOTES.md`. Ověřeno na Linuxové kopii: `npx vitest run` (87 testů), `npx tsc --noEmit -p .`, `npm run lint`, `npm run agent:skills:check`; mutacemi (rozdílný popis, `execute` v analytickém obalu, chybějící `agent` ve `work-task`, chybný odkaz na zdroj) ověřeno, že test selže. Formát prompt files a čtení `.claude/agents` ve VS Code ověřeno jen z dokumentace (2026-11-05). Neověřeno: AC-21 (běh ve VS Code s Copilotem, přijetí aliasů `tools`, `runSubagent`), Codex.
 Stav: [x] hotovo
+
+## T-7
+- nazev: Překlad AGENTS.md do angličtiny
+Cíl: Načítaný AGENTS.md je anglicky a všechny odkazy na jeho sekce sedí.
+Nápad: IDEA-006 (D-15)
+Splňuje: AC-22
+Závisí na: T-6
+Riziko: A
+Model: stredni
+Hotovo, když: `npx vitest run`, `npx tsc --noEmit -p .`, `npm run lint` a `npm run agent:skills:check` procházejí; AGENTS.md má do 200 řádků.
+Stav: [~]
