@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -108,5 +108,96 @@ describe("agent workflow documentation", () => {
       expect(section, `třída ${riskClass}`).toContain(`- **${riskClass}** (`);
     }
     expect(skill).toContain("Třída rizika");
+  });
+});
+
+describe("entry commands, model tiers and agent notes (D-13)", () => {
+  const MODELS = ["opus", "sonnet", "haiku"];
+  const frontmatter = (text: string): Record<string, string> => {
+    const block = /^---\n([\s\S]*?)\n---\n/.exec(text)?.[1] ?? "";
+    return Object.fromEntries(
+      [...block.matchAll(/^([a-z-]+):\s*(.*)$/gm)].map((m) => [m[1], m[2].replace(/^['"]|['"]$/g, "")]),
+    );
+  };
+
+  it("ships the three entry commands with a description and a valid model", () => {
+    for (const name of ["discover-project", "plan-increment", "work-task"]) {
+      const file = `.claude/commands/${name}.md`;
+      expect(existsSync(path.join(workspaceRoot, file)), file).toBe(true);
+      const meta = frontmatter(readProjectFile(file));
+      expect(meta.description, `${name}: description`).toBeTruthy();
+      if (meta.model) expect(MODELS, `${name}: model`).toContain(meta.model);
+    }
+    // Analýza a plán jsou na silném modelu; work-task model neurčuje (řídí ho pole Model: úkolu).
+    expect(frontmatter(readProjectFile(".claude/commands/discover-project.md")).model).toBe("opus");
+    expect(frontmatter(readProjectFile(".claude/commands/plan-increment.md")).model).toBe("opus");
+    expect(frontmatter(readProjectFile(".claude/commands/work-task.md")).model).toBeUndefined();
+  });
+
+  it("only references existing agent files and AGENTS.md sections", () => {
+    const agents = readProjectFile("AGENTS.md");
+    const texts = ["discover-project", "plan-increment", "work-task"].map((n) =>
+      readProjectFile(`.claude/commands/${n}.md`),
+    );
+    for (const text of texts) {
+      for (const ref of text.matchAll(/`((?:\.claude|\.agents)\/[^`*]+\.md)`/g)) {
+        expect(existsSync(path.join(workspaceRoot, ref[1])), ref[1]).toBe(true);
+      }
+    }
+    // Delegát z /work-task musí být skutečný subagent.
+    const delegates = [...texts.join("\n").matchAll(/subagent_type: ([a-z-]+)/g)].map((m) => m[1]);
+    expect(delegates).toContain("task-executor");
+    for (const name of delegates) {
+      expect(existsSync(path.join(workspaceRoot, `.claude/agents/${name}.md`)), name).toBe(true);
+    }
+    for (const section of ["Třída rizika", "Práce ve větvi úkolu", "Souhlas a důkaz", "Úrovně modelů a jazyk", "Výstup"]) {
+      expect(agents, section).toContain(`\n## ${section}\n`);
+    }
+  });
+
+  it("keeps the executor subagent narrow and its report a claim, not evidence", () => {
+    const text = readProjectFile(".claude/agents/task-executor.md");
+    const meta = frontmatter(text);
+    expect(meta.name).toBe("task-executor");
+    expect(MODELS).toContain(meta.model);
+    const tools = meta.tools.split(",").map((t) => t.trim());
+    expect(tools).toContain("Bash");
+    expect(tools).not.toContain("Agent");
+    for (const forbidden of ["TASKS.md", "SPEC.md", "DECISIONS.md", "git commit", "git push"]) {
+      expect(text, forbidden).toContain(forbidden);
+    }
+    expect(text).toContain("claim, not evidence");
+  });
+
+  it("documents consent, evidence states, model tiers and stays short in AGENTS.md", () => {
+    const agents = readProjectFile("AGENTS.md");
+    for (const phrase of ["**Implementováno**", "**ověřeno**", "**akceptováno**"]) {
+      expect(agents, phrase).toContain(phrase);
+    }
+    expect(agents).toContain("`SPEC.md` nikdy nepřepisuj podle");
+    for (const tier of ["silny", "stredni", "lehky", "opus", "sonnet", "haiku"]) {
+      expect(agents, tier).toContain(`\`${tier}\``);
+    }
+    // Metodika (příloha A): kořenový instrukční soubor cílit pod 200 řádků.
+    expect(agents.split("\n").length).toBeLessThan(200);
+
+    const project = readProjectFile("PROJECT.md");
+    for (const heading of ["## Fáze", "## Aktivní přírůstek", "## Otevřené otázky"]) {
+      expect(project, heading).toContain(heading);
+    }
+    for (const model of readProjectFile("TASKS.md").matchAll(/^Model: (.+)$/gm)) {
+      expect(["silny", "stredni", "lehky"], `Model: ${model[1]}`).toContain(model[1].trim());
+    }
+  });
+
+  it("keeps AGENT-NOTES.md append-only (merge=union) with well-formed entries", () => {
+    const notes = readProjectFile("AGENT-NOTES.md");
+    expect(notes.startsWith("# Agent working notes")).toBe(true);
+    const headings = [...notes.matchAll(/^## .*$/gm)].map((m) => m[0]);
+    expect(headings).not.toHaveLength(0);
+    for (const heading of headings) {
+      expect(heading).toMatch(/^## \d{4}-\d{2}-\d{2} T-\d+ [a-z-]+$/);
+    }
+    expect(readProjectFile(".gitattributes")).toMatch(/^AGENT-NOTES\.md merge=union$/m);
   });
 });
