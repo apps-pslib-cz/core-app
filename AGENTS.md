@@ -101,6 +101,51 @@ vyšší třídu.
 5. Dotaz nebo drobnost mimo úkol větev nepotřebuje - pak ale nic
    necommituj.
 
+## Vstupní postupy
+
+V Claude Code zahajují práci příkazy v `.claude/commands/`, jinde skill `agentic-engineering`:
+
+- `/discover-project` - zahájení nebo obnova specifikace (silný model).
+- `/plan-increment` - schválený rozsah → rozhodnutí `D-N` a úkoly `T-N` (silný).
+- `/work-task T-N` - jeden připravený úkol ve větvi s ověřením (model podle úkolu).
+
+`PROJECT.md` drží fázi, aktivní přírůstek a otázky `Q-N`; bod pokračování
+patří do záznamu úkolu.
+
+## Souhlas a důkaz
+
+- Souhlasy se nenahrazují: zápis dokumentace, schválení rozsahu, technické
+  rozhodnutí, oprávnění k riziku (třída C/D, push, merge), akceptace.
+  Nevzniká mlčením, zelenými testy ani výstupem subagenta.
+- `Schválení:` v `DECISIONS.md` zapíše agent až po výslovném „ano“ člověka
+  v konverzaci, s rozsahem, revizí a datem.
+- **Implementováno** (změna existuje) ≠ **ověřeno** (kontroly doložitelně
+  proběhly) ≠ **akceptováno** (člověk přijal výsledek). `[x]` v `TASKS.md`
+  znamená ověřeno, ne akceptováno produktem.
+- Nová potřeba nebo rozpor zjištěný při práci se neřeší uvnitř úkolu:
+  zapiš `Q-N` (`PROJECT.md`) nebo `IDEA-N` a `SPEC.md` nikdy nepřepisuj podle
+  hotové implementace.
+
+## Úrovně modelů a jazyk
+
+Úroveň určuje plán (pole `Model:` u úkolu), výchozí je podle třídy rizika.
+Analýzu, plán a review dělá silný model, rutinu levnější.
+
+| Úroveň | Výchozí pro | Claude Code | Smí |
+| --- | --- | --- | --- |
+| `silny` | třída C, D, analýza, plán, review | `opus` | cokoli v mezích třídy rizika |
+| `stredni` | třída B | `sonnet` | implementace malého, přesně zadaného úkolu |
+| `lehky` | třída A, mechanická rutina | `haiku` | úprava podle vzoru, doplnění textu, přejmenování |
+
+- Úroveň lze zvýšit; snížit jen s důvodem v úkolu. Třída C/D se nedeleguje
+  před schválením plánu.
+- Rutinu levnějším modelem dělá subagent `task-executor`. Jeho zpráva je
+  tvrzení, ne důkaz: diff, testy i lint ověřuje znovu hlavní agent.
+- Jazyk: s člověkem česky. Příkazy, definice agentů a `AGENT-NOTES.md`
+  (poznámky agentů pro agenty, jen přidávat, není to důkaz ani rozhodnutí)
+  anglicky. Rozhodnutí, důkazy a předání česky - hodnotí se z nich podíl
+  člověka a AI. Identifikátory a stavy ASCII.
+
 ## Odvozené repozitáře
 
 Tahle šablona je výchozím bodem appek, které z ní vznikly (seznam
