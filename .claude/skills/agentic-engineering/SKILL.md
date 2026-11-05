@@ -12,7 +12,7 @@ Use this workflow for non-trivial work in this parent project and projects built
 1. Read `AGENTS.md`, `SPEC.md`, the relevant `TASKS.md` entry, and related `DECISIONS.md` records. Read `CONVENTIONS.md` and applicable skills as needed.
 2. Separate the requested outcome from assumptions, out-of-scope work, approval state, and open questions.
 3. If the idea is not yet approved or has no clear acceptance criteria, record and analyze it; do not treat analysis or silence as implementation approval.
-4. For a non-trivial change, present the affected files, approach, risks, checks, and cheapest falsifiable check before editing. Classify the risk (class A-D, see the "Třída rizika" section of `AGENTS.md`) and record it as `Riziko` in the task; for class C or D wait for approval of the plan before any edit.
+4. For a non-trivial change, present the affected files, approach, risks, checks, and cheapest falsifiable check before editing. Classify the risk (class A-D, see the "Risk class" section of `AGENTS.md`) and record it as `Riziko` in the task; for class C or D wait for approval of the plan before any edit.
 5. Implement only the approved scope. Request approval before adding dependencies, changing data models, or changing architecture.
 
 ## Task branch

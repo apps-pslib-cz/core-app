@@ -7,7 +7,7 @@ argument-hint: '[T-N]'
 
 Orchestrator step. It runs on the session model; implementation of routine
 tasks is delegated by the task's `Model:` field (see `AGENTS.md`,
-"Úrovně modelů a jazyk"). Verification and evidence are **always** done here,
+"Model tiers and language"). Verification and evidence are **always** done here,
 never taken from the delegate's report.
 
 ## Language
@@ -18,7 +18,7 @@ Working notes go to `AGENT-NOTES.md` in English. Invocation argument:
 
 ## Load first (actually open these files)
 
-1. `AGENTS.md` - "Třída rizika", "Práce ve větvi úkolu", "Souhlas a důkaz".
+1. `AGENTS.md` - "Risk class", "Task branch", "Consent and evidence".
 2. `TASKS.md` - the task record and its `Závisí na` tasks.
 3. `SPEC.md` - the referenced `AC-N`; `DECISIONS.md` - related `D-N`.
 4. `PROJECT.md` - blocking `Q-N`.
@@ -85,6 +85,6 @@ evidence, a decision or an approval.
 
 ## Handover (Czech)
 
-Follow "Výstup" in `AGENTS.md`: what changed, how it was verified (exact
+Follow "Output" in `AGENTS.md`: what changed, how it was verified (exact
 commands), what is not verified, branch name and `git log --oneline`, and ask
 for review. Do not start the next task.

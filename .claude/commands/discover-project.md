@@ -7,7 +7,7 @@ allowed-tools: Read, Glob, Grep, Write, Edit
 
 # Discover project
 
-Analysis step: run it on the strong model tier (see `AGENTS.md`, "Úrovně modelů a jazyk").
+Analysis step: run it on the strong model tier (see `AGENTS.md`, "Model tiers and language").
 
 ## Language
 
@@ -16,7 +16,7 @@ and state slugs ASCII. Invocation argument: `$ARGUMENTS`.
 
 ## Load first (actually open these files)
 
-1. `AGENTS.md` - especially "Souhlas a důkaz" and "Třída rizika".
+1. `AGENTS.md` - especially "Consent and evidence" and "Risk class".
 2. `PROJECT.md` - phase and open questions `Q-N`.
 3. `SPEC.md` - existing purpose, scenarios, data, acceptance criteria `AC-N`.
 4. `DECISIONS.md` and `IDEAS.md` - what is already decided or proposed.

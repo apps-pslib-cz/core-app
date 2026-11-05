@@ -26,4 +26,4 @@ Mapping for this tool:
   `stredni`. If subagents are unavailable, do the work yourself and say so in
   the handover.
 - Checks and git are run in the terminal; the safeguards of `AGENTS.md`
-  ("Omezení") apply, because Copilot has no enforced permissions here.
+  ("Constraints") apply, because Copilot has no enforced permissions here.
