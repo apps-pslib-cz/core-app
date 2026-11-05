@@ -190,6 +190,31 @@ describe("entry commands, model tiers and agent notes (D-13)", () => {
     }
   });
 
+  it("offers the same workflows to Copilot as thin prompt wrappers (D-14)", () => {
+    const names = ["discover-project", "plan-increment", "work-task"];
+    for (const name of names) {
+      const claude = readProjectFile(`.claude/commands/${name}.md`);
+      const file = `.github/prompts/${name}.prompt.md`;
+      expect(existsSync(path.join(workspaceRoot, file)), file).toBe(true);
+      const prompt = readProjectFile(file);
+      const meta = frontmatter(prompt);
+      expect(meta.description, `${name}: description`).toBe(frontmatter(claude).description);
+      expect(meta.agent).toBe("agent");
+      // Tenký obal: odkazuje na jediný zdroj postupu, nekopíruje ho.
+      expect(prompt).toContain(`.claude/commands/${name}.md`);
+      expect(prompt.split("\n").length, `${name}: wrapper too long`).toBeLessThan(40);
+      const tools = meta.tools.replace(/[\[\]'" ]/g, "").split(",");
+      if (name === "work-task") {
+        expect(tools).toEqual(expect.arrayContaining(["agent", "execute", "edit"]));
+        expect(prompt).toContain("runSubagent");
+      } else {
+        // Analytické postupy nemají shell (stejně jako allowed-tools u Claude příkazu).
+        expect(tools).not.toContain("execute");
+        expect(tools).not.toContain("agent");
+      }
+    }
+  });
+
   it("keeps AGENT-NOTES.md append-only (merge=union) with well-formed entries", () => {
     const notes = readProjectFile("AGENT-NOTES.md");
     expect(notes.startsWith("# Agent working notes")).toBe(true);
