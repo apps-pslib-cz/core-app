@@ -110,6 +110,22 @@ nejsou součástí tohoto souboru, patří do nového `SPEC.md`.
 - [x] AC-14: Třídy rizika A-D jsou v `AGENTS.md` (načítá se vždy) i v
   kanonickém skillu `agentic-engineering`; hlídá je
   `tests/unit/agentDocs.test.ts`.
+- [x] AC-15: Vstupní příkazy `/discover-project`, `/plan-increment` a
+  `/work-task` existují v `.claude/commands/` s popisem; pole `model` je jen
+  `opus`, `sonnet` nebo `haiku` a příkazy analýzy (discover, plan) jsou na
+  `opus` (`tests/unit/agentDocs.test.ts`, D-13).
+- [x] AC-16: Subagent `task-executor` má omezené nástroje bez `Agent`, zakazuje
+  si měnit evidenci a git a vrací zprávu jako tvrzení; `AGENTS.md` mapuje
+  úrovně `silny`/`stredni`/`lehky` na modely a zůstává pod 200 řádky
+  (`tests/unit/agentDocs.test.ts`).
+- [x] AC-17: `AGENTS.md` rozlišuje druhy souhlasu a stavy implementováno /
+  ověřeno / akceptováno a říká, že `SPEC.md` se nepřepisuje podle
+  implementace; `PROJECT.md` existuje s fází, aktivním přírůstkem a otázkami.
+- [x] AC-18: `AGENT-NOTES.md` je anglicky, přidávaný a v `.gitattributes`
+  má `merge=union`; příkazy a agent jsou anglicky (`tests/unit/agentDocs.test.ts`).
+- [ ] AC-19: Příkazy a `task-executor` fungují v běžícím Claude Code: příkazy
+  se nabízejí v `/`, `/work-task` předá úkol agentovi na zvoleném modelu a
+  po něm sám ověří diff i testy. Ověřit ručně na úkolu třídy A.
 
 ## 6. Mimo rozsah
 
@@ -147,3 +163,6 @@ Hranice, které mají platit bezvýjimečně, vynucuje v Claude Code
 `.claude/settings.json` (oprávnění) a `scripts/guard-main-branch.mjs`
 (zákaz commitu do hlavní větve), viz D-12. Copilot a Codex jsou zatím
 kryty jen textem v `AGENTS.md` (IDEA-004).
+
+Vstupní příkazy, úrovně modelů a poznámky agentů (`AGENT-NOTES.md`) jsou
+popsány v `AGENTS.md` a odůvodněny v D-13; jen Claude Code (IDEA-007).

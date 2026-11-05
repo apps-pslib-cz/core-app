@@ -39,3 +39,14 @@ Stav: [x] hotovo
 ## T-3
 Hotovo (2026-11-04): IDEA-003, AC-12, AC-14, D-12 a podklady k AC-2/AC-3; AC-13 čeká na ruční ověření v Claude Code. Ve větvi `task/T-3-vynuceni-a-rizika`. `permissions` a hook `scripts/guard-main-branch.mjs` v `.claude/settings.json` (`tests/unit/guardMainBranch.test.ts`, 6 testů); sekce „Třída rizika“ v `AGENTS.md` a ve skillu (test v `agentDocs.test.ts`); `tests/unit/apiAuthorization.test.ts` (24 testů). Ověřeno na Linuxové kopii zdrojů: `npx vitest run` (80 testů), `npx tsc --noEmit -p .`, `npm run lint`, `npm run agent:skills:check`; mutacemi (odstranění kontroly vlastního profilu, role u DELETE, `requireRole`, zákazu přidělení `admin`, ochrany `main`, třídy D v `AGENTS.md`) ověřeno, že testy selžou. Neověřeno: `permissions` a hook v běžícím Claude Code (AC-13), živé volání API (`curl`), běh na Windows; Copilot a Codex zůstávají bez vynucení (IDEA-004). Nález mimo úkol: `npm ci` selže s npm 10 (S-36).
 Stav: [x] hotovo
+
+## T-5
+- nazev: Převzetí postupů ze starter kitu (příkazy, modely, jazyk)
+Cíl: Vstupní příkazy, subagent pro rutinu, PROJECT.md, AGENT-NOTES.md, pravidla o souhlasu a důkazu a politika modelů a jazyka (D-13) jsou v šabloně a hlídají je testy.
+Nápad: IDEA-005 (D-13)
+Splňuje: AC-15, AC-16, AC-17, AC-18, AC-19
+Závisí na: T-3
+Riziko: B
+Model: silny
+Hotovo, když: `npx vitest run`, `npx tsc --noEmit -p .`, `npm run lint` a `npm run agent:skills:check` procházejí; AGENTS.md má do 200 řádků; AC-19 ověřeno ručně v běžícím Claude Code.
+Stav: [~]

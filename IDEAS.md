@@ -28,3 +28,21 @@ neodvozují.
 - Navrh: Zákaz commitu do hlavní větve a potvrzování rizikových git příkazů dnes drží jen Claude Code. Zvážit nástrojově neutrální git hook (`pre-commit`) nebo nativní hooky Copilotu a Codexu po ověření jejich formátu a chování v cílovém runtime.
 - Stav: nový
 - Vazby: [T-3](TASKS.md#t-3)
+
+## IDEA-005
+- Nazev: Převzetí osvědčených postupů z agentic-starter-kit
+- Navrh: Z revize kolegova kitu převzít vstupní příkazy, soubor se stavem projektu, rozlišení druhů souhlasu a stavů implementováno / ověřeno / akceptováno, dělbu práce mezi silný a levnější model a anglické poznámky agentů, vše přizpůsobené větvím úkolů, stavům `[ ] [~] [!] [x]` a vynucení z T-3.
+- Stav: hotovo
+- Vazby: [T-5](TASKS.md#t-5)
+
+## IDEA-006
+- Nazev: Anglický AGENTS.md a měření spotřeby tokenů
+- Navrh: Přeložit načítaný `AGENTS.md` (a případně skills) do angličtiny, zachovat české názvy sekcí, na které se odkazují testy, a změřit skutečnou úsporu tokenů před a po. Dokumenty hodnocené učitelem zůstanou česky.
+- Stav: nový
+- Vazby: žádné
+
+## IDEA-007
+- Nazev: Příkazy a dělba modelů i pro Copilot a Codex
+- Navrh: Ověřit, jak Copilot (prompt files) a Codex nabízejí vstupní příkazy a volbu modelu, a zapsat ekvivalent `/discover-project`, `/plan-increment` a `/work-task`; do té doby jsou kryty jen textem v `AGENTS.md`.
+- Stav: nový
+- Vazby: žádné
