@@ -41,12 +41,5 @@ Hotovo (2026-11-04): IDEA-003, AC-12, AC-14, D-12 a podklady k AC-2/AC-3; AC-13 
 Stav: [x] hotovo
 
 ## T-5
-- nazev: Převzetí postupů ze starter kitu (příkazy, modely, jazyk)
-Cíl: Vstupní příkazy, subagent pro rutinu, PROJECT.md, AGENT-NOTES.md, pravidla o souhlasu a důkazu a politika modelů a jazyka (D-13) jsou v šabloně a hlídají je testy.
-Nápad: IDEA-005 (D-13)
-Splňuje: AC-15, AC-16, AC-17, AC-18, AC-19
-Závisí na: T-3
-Riziko: B
-Model: silny
-Hotovo, když: `npx vitest run`, `npx tsc --noEmit -p .`, `npm run lint` a `npm run agent:skills:check` procházejí; AGENTS.md má do 200 řádků; AC-19 ověřeno ručně v běžícím Claude Code.
-Stav: [~]
+Hotovo (2026-11-05): IDEA-005, AC-15 až AC-18, D-13. Ve větvi `task/T-5-prevzeti-z-starter-kitu`. Příkazy `/discover-project`, `/plan-increment`, `/work-task` (`.claude/commands/`), subagent `task-executor`, `PROJECT.md`, `AGENT-NOTES.md` (`merge=union`), sekce „Vstupní postupy“, „Souhlas a důkaz“ a „Úrovně modelů a jazyk“ v `AGENTS.md` (195 řádků), věta ve skillu (zrcadlo přes `npm run agent:skills:sync`), metodika 4.2, 5 nových testů v `agentDocs.test.ts`. Ověřeno na Linuxové kopii (čistý klon z `main`, `npm install`, ignorovaný `src/generated` zkopírován z pracovní kopie): `npx vitest run` (86 testů), `npx tsc --noEmit -p .`, `npm run lint`, `npm run agent:skills:check`; mutacemi (model discover na `sonnet`, `Agent` v nástrojích executoru, zmizelý zákaz `TASKS.md` u executoru, chybějící `merge=union`, chybějící „ověřeno“ v `AGENTS.md`, neplatné `Model:`, překlep v `subagent_type`) ověřeno, že testy selžou. Neověřeno: AC-19 (příkazy a delegace v běžícím Claude Code), skutečná úspora tokenů, Copilot a Codex (IDEA-007); `AGENTS.md` zůstává česky (IDEA-006). `package-lock.json` beze změny (`npm ci` s npm 10 dál selhává, S-36).
+Stav: [x] hotovo
