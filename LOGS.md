@@ -11,3 +11,9 @@ This is an audit trail of observed task status changes, not approval or evidence
 | 2026-11-02T23:23:51.379Z | T-2 | new | done | claude-code |
 | 2026-11-03T23:26:09.518Z | T-3 | new | in-progress | manual |
 | 2026-11-03T23:31:01.720Z | T-3 | in-progress | done | manual |
+| 2026-11-05T11:20:41.730Z | T-5 | new | in-progress | manual |
+| 2026-11-05T11:20:55.117Z | T-5 | in-progress | done | manual |
+| 2026-11-05T11:29:12.944Z | T-6 | new | in-progress | manual |
+| 2026-11-05T11:30:16.419Z | T-6 | new | done | manual |
+| 2026-11-05T11:32:43.425Z | T-7 | new | in-progress | manual |
+| 2026-11-05T11:34:20.382Z | T-7 | in-progress | done | manual |

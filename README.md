@@ -56,7 +56,10 @@ administrace uživatelů (seznam/detail/vytvoření/úprava/smazání,
 synchronizace avatarů a aktivity z OAuth serveru) přepsaná na
 `@tanstack/react-query`, chybové stránky, admin logy, footer stránky,
 agentická infrastruktura pro Claude Code, GitHub Copilot a Codex
-(`AGENTS.md`, `.agents/skills`, nativní hook konfigurace, `LOGS.md` a
+(`AGENTS.md`, `.agents/skills`, vstupní příkazy `/discover-project`,
+`/plan-increment`, `/work-task` (Claude Code, pro Copilot obaly v `.github/prompts`)
+a subagent `task-executor`,
+nativní hook konfigurace, `LOGS.md`, `AGENT-NOTES.md`, `PROJECT.md` a
 projektové záznamy v `SPEC.md`/`TASKS.md`/`DECISIONS.md`/`IDEAS.md`),
 deployment skripty a návod (`scripts/`, `docs/deployment.md`).
 

@@ -54,7 +54,30 @@ Oprava (`evaluation-v1-app`, 2026-10-27): sdílené `uniqueConstraintField`
 / `uniqueUserFieldMessage` (`src/libs/userErrors.ts`) čtou oba tvary,
 název indexu `<tabulka>_<sloupec>_key` převedou na sloupec. Unit
 `tests/unit/userErrors.test.ts`, e2e `tests/e2e/user-teacher.spec.ts`.
-Stav: core-app [ ] · projects-v1-app [ ] · internship-v5-app [?] · evaluation-v1-app [x]
+**Pozor (zjištěno z `projects-v1-app`, 2026-11-03):** `src/libs/userErrors.ts`
+se v `evaluation-v1-app` nenašel v žádné větvi ani historii (`git log
+--all -- "*userErrors*"` prázdné) - oprava tam byla pravděpodobně
+necommitnutá a ztracená před týmhle zápisem. `evaluation-v1-app [x]`
+níž stojí za přímé ověření, než se na něj někdo spolehne jako na zdroj
+k opsání.
+**Vyvráceno (`evaluation-v1-app`, 2026-11-03):** oprava ztracená není -
+`src/libs/userErrors.ts` i oba testy jsou v commitu `325e85a` na
+`origin/main`. Lokální klon jen nebyl stažený (`main` 9 commitů za
+`origin/main`), proto je `git log --all` neviděl. Před závěrem „ztraceno“
+nejdřív `git fetch` a hledat i v `origin/*`.
+Stav: core-app [ ] · projects-v1-app [x] · internship-v5-app [?] · evaluation-v1-app [x]
+Opraveno v `projects-v1-app` (T-54, 2026-11-03): referenční `userErrors.ts`
+nedostupný (viz pozor výš), implementováno znovu od nuly jako
+`src/libs/prismaErrors.ts` - `getUniqueConstraintField(error,
+tableName)`/`isUniqueConstraintViolationOn(error, tableName, fieldName)`,
+`tableName` jako parametr (ne auto-detekce prefixu z indexu - tabulky
+s podtržítkem v názvu, např. `article_translations`, by jinak šlo
+rozpojit víc způsoby). Postihovalo i `articles/route.ts`/
+`articles/[id]/route.ts` (vlastní, novější kontrola na duplicitní
+`slug`, co se díky týhle chybě nikdy nespustila - vracela 500 místo
+409). Ověřeno `tsc`/`vitest` (476/476, nový `tests/unit/prismaErrors.test.ts`)
+a živě proti **skutečně vyhozené** P2002 (ne mocku) pro oba případy
+(`users`/email, `article_translations`/slug).
 
 ### S-31 Odkazy bez jazyka mimo menu přepínají do češtiny (2026-10-28)
 Popis: stejná třída jako oprava menu (`localizedHref`), ale mimo hlavní
@@ -75,7 +98,27 @@ zakáže `next/link` jinde, `src/hooks/useLocalizedRouter.ts` pro `push` /
 `tests/e2e/localized-links.spec.ts` - bez opravy selže.
 Stav: core-app [ ] · projects-v1-app [ ] · internship-v5-app [?] · evaluation-v1-app [x]
 
-### S-32 Pravidla agenta bez vynucení (2026-11-04)
+### S-32 Log stavů úkolů nepozná úkoly pod nadpisem 3. úrovně ani `T-6a` (2026-11-03)
+Popis: `scripts/log-task-status.mjs` bral jako úkol jen `## T-<číslo>`.
+`TASKS.md` členěný do etap (`## Etapa 1` → `### T-6a Název`) nebo s ID
+s písmenem skript tiše přeskočil - hook běžel, `LOGS.md` zůstal prázdný,
+žádná chyba. Kdo převzal skript 1:1 do appky s jiným formátem `TASKS.md`,
+log stavů ve skutečnosti nemá.
+Místo: `scripts/log-task-status.mjs` (`parseTaskStatuses`,
+`readLatestStatuses`) - `core-app`, převzato 1:1 v `projects-v1-app`
+(tam formát `## T-N Název` vyhovuje, chyba se neprojeví).
+Oprava (`core-app`, 2026-11-03, z `evaluation-v1-app`): úkol je nadpis
+2. nebo 3. úrovně `T-<číslo>[písmeno]`, končí dalším nadpisem stejné nebo
+vyšší úrovně (etapa úkol uzavře, `####` uvnitř úkolu ne); totéž ID
+v řádcích `LOGS.md`. Zpětně kompatibilní. Test `reads tasks under stage
+headings and IDs with a letter suffix` v `tests/unit/taskStatusLog.test.ts`,
+s původním skriptem selže. `npx vitest run` 50/50, tsc, skript na vlastním
+`TASKS.md` bez zápisu.
+Stav: core-app [x] · projects-v1-app [ ] · internship-v5-app [?] · evaluation-v1-app [x]
+`projects-v1-app`: převzít nový skript a test 1:1 (formát `TASKS.md` tam
+funguje i se starým, jde jen o shodu se šablonou).
+
+### S-33 Pravidla agenta bez vynucení (2026-11-04)
 Popis: `AGENTS.md` zakazuje commit do hlavní větve, čtení `.env` a ruční
 zásahy do generovaného klienta a migrací, ale `.claude/settings.json` měl
 jen logovací hooky. Pravidlo drželo pouze text, který agent v dlouhé relaci
@@ -89,7 +132,7 @@ Copilot a Codex viz IDEA-004. Pravidla `permissions` ještě nejsou ověřena
 v běžícím Claude Code (AC-13).
 Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
 
-### S-33 Třídy rizika chybí v `AGENTS.md` (2026-11-04)
+### S-34 Třídy rizika chybí v `AGENTS.md` (2026-11-04)
 Popis: Třídy A-D (metodika, kapitola 6) byly jen v `CONVENTIONS.md` a
 v metodice. `AGENTS.md` ani skill je nezmiňovaly, takže je agent v praxi
 nepoužil. `CONVENTIONS.md` navíc odkazoval na `AGENTS.md`, sekci Omezení,
@@ -102,7 +145,7 @@ věta ve skillu (zrcadlo přes `npm run agent:skills:sync`), opravený odkaz
 v `CONVENTIONS.md`, test v `tests/unit/agentDocs.test.ts` (ověřeno mutací).
 Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
 
-### S-34 Autorizace API bez testů (2026-11-04)
+### S-35 Autorizace API bez testů (2026-11-04)
 Popis: V `tests/unit` nebyl žádný test `RoleChecker`, `requireAuthentication`
 ani autorizace route handlerů uživatelů. Kritéria AC-2 a AC-3 ve `SPEC.md`
 tak neměla žádný důkaz a regrese (např. odstranění kontroly vlastního profilu
@@ -114,7 +157,7 @@ DELETE, `requireRole` i zákazu přidělení `admin`). Je to vzor: odvozený
 repozitář přidá stejné případy pro vlastní routy. Živé ověření `curl` zbývá.
 Stav: core-app [x] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
 
-### S-35 `npm ci` selže s npm 10 (2026-11-04)
+### S-36 `npm ci` selže s npm 10 (2026-11-04)
 Popis: `package-lock.json` (lockfileVersion 3) projde `npm ci` s npm 11, ale
 s npm 10.9.9 končí `EUSAGE ... Missing: typescript@5.9.3 from lock file`.
 `docs/deployment.md` (krok „Instalace závislostí“) instaluje přes `npm ci`,

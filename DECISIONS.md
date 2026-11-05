@@ -250,3 +250,54 @@ Důvod: Metodika (kapitola 5) i `CONVENTIONS.md` říkají, že psané pravidlo 
 Důsledek: Platí jen v Claude Code. Copilot a Codex jsou kryty jen textem (IDEA-004); hooky nejsou mezi nástroji přenositelné (příloha A metodiky). Zákaz čtení `.env` se týká nástroje Read, ne `cat` v shellu, takže to není sandbox. Hook je záměrně "fail open" (vlastní chyba nezablokuje práci) a obejít ho jde skriptem, který commit provede sám. Potvrzení u `git merge` je záměr: slučování do hlavní větve zůstává rozhodnutím člověka (D-11). Hook má jednotkové testy (AC-12); že pravidla `permissions` fungují v běžícím Claude Code, ověřuje ručně AC-13.
 
 Schválení: uživatel v chatu dne 2026-11-04 (pokyn "rovnou oprav core-app" po revizi šablony).
+
+## D-13 Úrovně modelů, jazyk instrukcí a převzetí postupů ze starter kitu (2026-11-05)
+Rozhodnutí: (1) Netriviální práce má v Claude Code vstupní příkazy
+`/discover-project`, `/plan-increment` a `/work-task` (`.claude/commands/`).
+(2) Úkol nese pole `Model:` (`silny` | `stredni` | `lehky`), výchozí podle
+třídy rizika (A lehký, B střední, C a D silný); analýzu, plán a review dělá
+silný model, rutinu úkolu subagent `task-executor` (`sonnet`, při volání lze
+přepsat na `haiku`). Hlavní agent po delegaci diff i kontroly ověřuje sám.
+(3) Jazyk: s člověkem česky; příkazy, definice agentů a nový `AGENT-NOTES.md`
+(jen přidávaný, `merge=union`) anglicky; rozhodnutí, důkazy a předání česky.
+(4) `PROJECT.md` drží fázi, aktivní přírůstek a otevřené otázky `Q-N`; bod
+pokračování zůstává v záznamu úkolu. (5) `AGENTS.md` rozlišuje druhy souhlasu
+a stavy implementováno / ověřeno / akceptováno a zakazuje řešit novou potřebu
+úpravou `SPEC.md`.
+
+Důvod: Revize kolegova starter kitu (Claude Code varianta) ukázala hodnotné
+postupy, které šablona nemá: příkazy jako deterministický vstup, soubor se
+stavem projektu, oddělené druhy souhlasu a důkazu. Dělba modelů a anglické
+poznámky v kitu nejsou; vychází z toho, že malý, přesně zadaný úkol zvládne
+levnější model, pokud plán napsal silný. Anglické instrukce jsou kratší a
+přesnější, ale to, z čeho se hodnotí podíl studenta a AI, zůstává česky.
+
+Důsledek: Platí jen v Claude Code (příkazy, agent, `model:`); Copilot a
+Codex zůstávají na textu (IDEA-007). `AGENTS.md` je dosud celý česky, takže
+se úspora tokenů projeví až po jeho případném překladu (IDEA-006); úspora
+nebyla měřena. Správnost příkazů v běžícím Claude Code ověřuje ručně AC-19.
+Přenos stavu do `PROJECT.md` se z kitu záměrně nepřebral (konflikty ve
+větvích úkolů), stavy úkolů zůstávají `[ ] [~] [!] [x]`, aby je četl hook.
+
+Schválení: plán (příkazy a `PROJECT.md`, souhlasy a důkaz v `AGENTS.md`,
+úrovně modelů a jazyk jako nové rozhodnutí, testy) schválil uživatel v chatu
+dne 2026-11-05 pokynem „S plánem souhlasím, zapracuj, co jde“. Konkrétní
+znění D-13 projde kontrolou při merge.
+
+## D-14 Příkazy pro Copilot jako tenké obaly (2026-11-05)
+Rozhodnutí: Pro GitHub Copilot ve VS Code existují `.github/prompts/discover-project.prompt.md`, `plan-increment.prompt.md` a `work-task.prompt.md`. Jsou to tenké obaly (frontmatter `description`, `agent: agent`, `argument-hint`, `tools` + krátké mapování nástrojů), které odkazují na `.claude/commands/<název>.md` jako jediný zdroj postupu; postup se nekopíruje. Delegáta `task-executor` Copilot čte přímo z `.claude/agents/` (VS Code podporuje formát Claude agentů) a volá ho přes `runSubagent`. Model obal nepřipíná, vybírá ho člověk v pickeru.
+
+Důvod: Kopie postupu do dvou nástrojů by se rozešla (stejný problém řeší skills zrcadlem). Obal drží jen to, co je nástrojově specifické. ID modelů v Copilotu závisí na tarifu a mění se, takže pevné `model:` by se rozbilo; úroveň modelu zůstává pravidlem v `AGENTS.md` a v poli `Model:` úkolu.
+
+Důsledek: Test hlídá, že obaly existují, mají stejný popis jako Claude příkaz a odkazují na existující zdroj. Názvy nástrojů v `tools` (`read`, `edit`, `search`, `execute`, `agent`) pocházejí z dokumentace custom agentů; že je prompt files ve VS Code přijmou beze změny a že `runSubagent` s `task-executor` funguje, ověřuje ručně AC-21. Copilot dál nemá vynucená oprávnění (IDEA-004). Codex zůstává bez příkazů.
+
+Schválení: uživatel v chatu dne 2026-11-05 (pokyn „dodělej příkazy pro Copilot“). Znění D-14 projde kontrolou při merge.
+
+## D-15 AGENTS.md anglicky (2026-11-05)
+Rozhodnutí: Načítaný `AGENTS.md` je celý anglicky, včetně názvů sekcí (Risk class, Task branch, Entry workflows, Consent and evidence, Model tiers and language, Constraints, Output). Česky zůstávají názvy polí a značek, na které odkazují záznamy (`Riziko:`, `Model:`, `Schválení:`), české štítky shrnutí pro člověka (Co se změnilo / Jak jsem to ověřil / Co není ověřeno), `CONVENTIONS.md`, metodika a evidence. Pravidlo, že agent s člověkem mluví česky, platí dál. Odkazy na sekce v příkazech, obalech pro Copilot, skillu, testech, hooku a `CONVENTIONS.md` jsou přejmenované. Doplňuje D-13 (anglické instrukce pro stroje).
+
+Důvod: Soubor se načítá v každé relaci a angličtina bývá pro model kratší v tokenech a přesnější. Výuková a hodnotitelná část zůstala česky: metodika, rozhodnutí, důkazy a předání.
+
+Důsledek: Úspora tokenů nebyla změřena (tokenizér nebyl v prostředí dostupný); počet bajtů ani řádků ji neukazuje. Změřit ji lze v Claude Code příkazem `/context` (řádek s paměťovými soubory) na větvi před a po (IDEA-008). Historické záznamy (D-12, T-3, `SISTER-REPOS.md`) odkazují na staré české názvy sekcí a zůstávají beze změny. Odvozené repozitáře s vlastním `AGENTS.md` se tím nemění; přenos je samostatný záznam v `SISTER-REPOS.md`. Test hlídá, že v `AGENTS.md` mimo kód, uvozovky a české štítky nezůstala česká próza.
+
+Schválení: uživatel v chatu dne 2026-11-05 („můžeme přeložit AGENTS do angličtiny“). Znění D-15 projde kontrolou při merge.

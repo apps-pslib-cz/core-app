@@ -32,6 +32,13 @@ přechod stavu a nástroj, který změnu zjistil; neukládá konverzace a
 nenahrazuje schválení ani testovací důkazy. Hooky Copilotu ve VS Code jsou
 ve Preview a Codex vyžaduje kontrolu/důvěru k projektovým hookům.
 
+**Příkazy, modely a jazyk.** Netriviální práci v Claude Code zahajují příkazy
+v `.claude/commands/` (`/discover-project`, `/plan-increment`, `/work-task`);
+Copilot má tenké obaly v `.github/prompts/` (D-14).
+Úkol má pole `Model:`; rutinu delegovaný subagent `task-executor`, ověření
+a evidence dělá vždy hlavní agent (D-13). Příkazy, agenti a `AGENT-NOTES.md`
+jsou anglicky, rozhodnutí, důkazy a předání česky.
+
 **Tohle je šablonová appka.** Konkrétní appka postavená na tomhle základu
 si tenhle soubor převezme a upraví podle svých skutečných potřeb (vlastní
 role, vlastní entity v sekci "Struktura projektu", vlastní obsah
@@ -52,7 +59,7 @@ z ní, co agent může dělat sám a co jen navrhnout. V tomto projektu typicky:
   force-push, změna oprávnění uživatelů.
 
 Pro C a D vždy nejdřív plán ke schválení, ne přímou implementaci — viz
-`AGENTS.md`, sekce „Třída rizika“ a Omezení (git operace, migrace,
+`AGENTS.md`, sekce „Risk class“ a „Constraints“ (git operace, migrace,
 závislosti).
 
 ## Obecná pravidla
@@ -213,7 +220,7 @@ Nejčastější typy: `feat`, `fix`, `chore`, `refactor`.
 
 Větev úkolu: `task/T-N-kratky-popis` (bez diakritiky, s pomlčkami),
 slučuje se `git merge --no-ff` až po souhlasu uživatele - postup
-v `AGENTS.md`, sekce „Práce ve větvi úkolu“.
+v `AGENTS.md`, sekce „Task branch“.
 
 ## Co preferovat / co nepoužívat
 

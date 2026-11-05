@@ -2,7 +2,7 @@
 
 **Metodika řízeného vývoje softwaru s AI agenty pro výuku i praxi**
 
-Verze 4.1 (platná metodika této šablony a projektů z ní odvozených) · Nástroje ověřeny k 29. 9. 2026 (viz Příloha A) · Text z 3. 11. 2026
+Verze 4.2 (platná metodika této šablony a projektů z ní odvozených) · Nástroje ověřeny k 29. 9. 2026 (viz Příloha A) · Text z 5. 11. 2026
 
 ## Jak tento dokument číst
 
@@ -410,6 +410,19 @@ Následující postup je výchozí pro netriviální úkol. U drobných změn je
 7. **Zápis a předání.** Aktualizuj `SPEC.md` a `TASKS.md`, zapiš rozhodnutí do `DECISIONS.md`, smaž `PLAN.md`, napiš popis změny s důkazy (4.8) a commit s popisem do větve úkolu.
 8. **Začlenění.** Větev se slučuje do hlavní větve až po úspěšných kontrolách a souhlasu člověka, který ji zkontroloval. Agent buď sloučí sám na výslovný pokyn, nebo člověka vyzve a uvede přesné příkazy; po sloučení se kontroly spustí znovu a větev se smaže. V týmu stejnou roli hraje pull request.
 
+### Úroveň modelu podle úkolu a jazyk
+
+Není důvod používat nejschopnější model na každý krok. Analýza (co přesně se má vyrobit, jaká jsou rizika, jak práci rozdělit) a review vyžadují úsudek; provedení malého, přesně zadaného úkolu podle vzoru vyžaduje hlavně pečlivost. Praktické pravidlo: **silný model plánuje a kontroluje, levnější model provádí rutinu.** Funguje za těchto podmínek:
+
+- Úroveň se určuje při plánování a zapisuje se k úkolu. Výchozí hodnota vychází ze třídy rizika: nízké riziko lehký model, běžné střední, vyšší a kritické silný.
+- Úkol pro levnější model musí být samostatný: uvádí soubory, vzor, který se má následovat, hranice a kontrolu, která by chybu odhalila. Nelze-li to napsat, je úkol příliš velký nebo nejasný a patří silnému modelu.
+- Zpráva delegovaného agenta je tvrzení, ne důkaz. Diff a kontroly znovu ověřuje ten, kdo úkol zadal.
+- Úspora se nepředpokládá, ale měří (spotřeba tokenů, počet oprav po review). Špatně zadaný úkol zdraží celek víc, než ušetří levnější model.
+
+**Jazyk.** Agent komunikuje s člověkem v jeho jazyce. Instrukce pro agenta a jeho pracovní poznámky mohou být anglicky: bývají kratší a přesnější a spotřebují méně tokenů. To, z čeho se posuzuje podíl člověka a AI (rozhodnutí, důkazy, předání), zůstává v jazyce člověka a musí být dohledatelné. Pracovní poznámky agentů nejsou důkaz ani rozhodnutí.
+
+**Souhlas a důkaz.** Je třeba rozlišovat několik různých souhlasů (zápis dokumentace, schválení rozsahu, technické rozhodnutí, oprávnění k rizikové operaci, akceptace výsledku); jeden nenahrazuje druhý a nevzniká mlčením ani úspěšným testem. Obdobně se liší stavy *implementováno* (změna existuje), *ověřeno* (kontroly doložitelně proběhly) a *akceptováno* (člověk výsledek přijal).
+
 ### Jak zadat úkol
 
 Místo:
@@ -769,6 +782,7 @@ použitím v jiné verzi IDE nebo prohlížeči je ověř.
 | **Oprávnění a vynucení** | Zákazy a schvalování oprávnění, hooky (např. blokování akce nebo ukončení práce, dokud kontrola neprojde). | Hooks (viz dokumentace Copilotu). | Hooks a oprávnění (viz dokumentace Codexu). |
 | **Projektové hooky** | `.claude/settings.json`, událost `FileChanged` pro `TASKS.md`. | `.github/hooks/*.json`; ve VS Code je hook rozhraní ve Preview. | `.codex/hooks.json` nebo `.codex/config.toml`; projektové hooky vyžadují kontrolu a důvěru uživatele. |
 | **Ověření, že se soubor načetl** | `/context` (seznam „Memory files“) nebo `/memory`. | V Copilot Chat na GitHub.com je soubor uveden v referencích odpovědi. | `codex --ask-for-approval never "Summarize the current instructions."` |
+| **Vstupní příkazy a výběr modelu** | Příkazy `.claude/commands/*.md` (pole `model`, `allowed-tools`); subagenti `.claude/agents/*.md` s polem `model` (`opus`, `sonnet`, `haiku`), model lze přepsat i při volání subagenta. | Prompt files `.github/prompts/*.prompt.md` (pole `agent`, `tools`, `model`); custom agenti `.github/agents/*.agent.md` a ve VS Code i `.claude/agents`; subagenti přes `runSubagent`. | Viz dokumentace Codexu. |
 | **Časté pasti** | `CLAUDE.md` tiše přebíjí `AGENTS.md`. Řešení: `CLAUDE.md` s řádkem `@AGENTS.md`. Import se načte hned při startu. Symbolický odkaz `CLAUDE.md` → `AGENTS.md` na Windows nespolehlivý; použij import. | Code review čte instrukce z větve s pull requestem, ne z hlavní větve. | `AGENTS.override.md` tiše přebíjí `AGENTS.md`. Prázdné soubory se přeskakují. Po dosažení stropu se instrukce oříznou. |
 
 ### Doporučení pro třídu se smíšenými nástroji
@@ -835,3 +849,4 @@ Všechny tři zdroje se shodují na dvouvrstvé struktuře: krátký trvalý kon
 - **Revize 3** – nezávislá revize provedená jinými nástroji, přinesla zejména kapitolu o bezpečnosti a autonomii, vrstvy ověření, varovné signály a kontrolní seznamy. Nástrojová příloha v ní byla zredukována na seznam otázek a odstraněny zdroje, ukázkový příklad a rozlišení převzatých a autorských částí.
 - **4.0** – sloučení verze 2.0 a vybraných částí revize 3; přidán popis změny s důkazy jako způsob, jak nezvyšovat počet souborů; hodnocení přepracováno s ohledem na praxi (rubrika s úrovněmi, důraz na obhajobu); příklad rozšířen o popis změny a nález při review.
 - **4.1** – práce ve větvi úkolu se slučováním do hlavní větve až po souhlasu člověka (kapitoly 6 a 7); chování stavového logu při přepínání a slučování větví (4.5); dokument je metodikou šablony, ze které vznikají další projekty, a neodkazuje na konkrétní předchozí projekt.
+- **4.2** – úroveň modelu podle úkolu (silný plánuje a kontroluje, levnější provádí rutinu), jazyk instrukcí a poznámek agentů, rozlišení druhů souhlasu a stavů implementováno / ověřeno / akceptováno; vstupní příkazy a výběr modelu v příloze A.

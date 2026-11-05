@@ -54,14 +54,24 @@ function parseArguments(argumentsList) {
 function parseTaskStatuses(content) {
   const statuses = new Map();
   let currentTaskId;
+  let currentTaskLevel = 0;
 
   for (const line of content.split(/\r?\n/)) {
-    if (line.startsWith("## ")) {
-      const heading = /^## (T-\d+)(?:\s|$)/.exec(line);
-      currentTaskId = heading?.[1];
-      if (!currentTaskId) {
+    // Úkol je nadpis 2. nebo 3. úrovně s ID na začátku (`## T-1`,
+    // `### T-6a Název` pod nadpisem etapy). Končí dalším nadpisem stejné
+    // nebo vyšší úrovně; hlubší nadpisy patří ještě do úkolu.
+    const headingLevel = /^(#{1,6}) /.exec(line)?.[1].length;
+    if (headingLevel) {
+      const task = headingLevel <= 3 ? /^#{2,3} (T-\d+[a-z]?)(?:\s|$)/.exec(line) : null;
+      if (!task) {
+        if (headingLevel <= currentTaskLevel) {
+          currentTaskId = undefined;
+          currentTaskLevel = 0;
+        }
         continue;
       }
+      currentTaskId = task[1];
+      currentTaskLevel = headingLevel;
 
       if (statuses.has(currentTaskId)) {
         throw new Error(`Duplicate task heading: ${currentTaskId}`);
@@ -117,7 +127,7 @@ function readLatestStatuses(logPath) {
     return latestStatuses;
   }
 
-  const rowPattern = /^\| [^|]+ \| (T-\d+) \| (?:new|ready|in-progress|blocked|done) \| (new|ready|in-progress|blocked|done) \| [a-z-]+ \|$/;
+  const rowPattern = /^\| [^|]+ \| (T-\d+[a-z]?) \| (?:new|ready|in-progress|blocked|done) \| (new|ready|in-progress|blocked|done) \| [a-z-]+ \|$/;
   for (const line of readFileSync(logPath, "utf8").split(/\r?\n/)) {
     const row = rowPattern.exec(line);
     if (row) {

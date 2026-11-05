@@ -12,7 +12,7 @@ Use this workflow for non-trivial work in this parent project and projects built
 1. Read `AGENTS.md`, `SPEC.md`, the relevant `TASKS.md` entry, and related `DECISIONS.md` records. Read `CONVENTIONS.md` and applicable skills as needed.
 2. Separate the requested outcome from assumptions, out-of-scope work, approval state, and open questions.
 3. If the idea is not yet approved or has no clear acceptance criteria, record and analyze it; do not treat analysis or silence as implementation approval.
-4. For a non-trivial change, present the affected files, approach, risks, checks, and cheapest falsifiable check before editing. Classify the risk (class A-D, see the "Třída rizika" section of `AGENTS.md`) and record it as `Riziko` in the task; for class C or D wait for approval of the plan before any edit.
+4. For a non-trivial change, present the affected files, approach, risks, checks, and cheapest falsifiable check before editing. Classify the risk (class A-D, see the "Risk class" section of `AGENTS.md`) and record it as `Riziko` in the task; for class C or D wait for approval of the plan before any edit.
 5. Implement only the approved scope. Request approval before adding dependencies, changing data models, or changing architecture.
 
 ## Task branch
@@ -37,6 +37,13 @@ Use this workflow for non-trivial work in this parent project and projects built
 3. Do not report a criterion as met based only on documentation edits or a successful typecheck when behavior was not exercised.
 4. Update the actual task state and its evidence. Keep generated logs separate from human decisions and test results.
 5. At handoff, list changed files, criteria with evidence, checks actually run, remaining risks, and the next useful step.
+
+## Entry commands, model tiers and notes
+
+- Claude Code entry commands live in `.claude/commands/`: `/discover-project`, `/plan-increment`, `/work-task T-N`. Other tools follow this workflow by hand.
+- Each task carries `Model:` (`silny` | `stredni` | `lehky`; defaults by risk: A lehky, B stredni, C and D silny). Strong models analyse, plan and review; routine class A/B implementation may go to the `task-executor` subagent. A delegate's report is a claim: review the diff and rerun the checks yourself.
+- Keep consent kinds apart (documentation write, scope, technical decision, risky operation, acceptance). Implemented, verified and accepted are different states. A new need found mid-task becomes `Q-N` in `PROJECT.md` or an idea; never edit `SPEC.md` to match the code.
+- Append terse English notes to `AGENT-NOTES.md`; it is not evidence, a decision or an approval.
 
 ## Tool compatibility
 
