@@ -103,7 +103,8 @@ vyšší třídu.
 
 ## Vstupní postupy
 
-V Claude Code zahajují práci příkazy v `.claude/commands/`, jinde skill `agentic-engineering`:
+V Claude Code zahajují práci příkazy v `.claude/commands/`, v Copilotu tenké obaly
+nad nimi v `.github/prompts/` (jeden zdroj), jinde skill `agentic-engineering`:
 
 - `/discover-project` - zahájení nebo obnova specifikace (silný model).
 - `/plan-increment` - schválený rozsah → rozhodnutí `D-N` a úkoly `T-N` (silný).
@@ -137,6 +138,7 @@ Analýzu, plán a review dělá silný model, rutinu levnější.
 | `stredni` | třída B | `sonnet` | implementace malého, přesně zadaného úkolu |
 | `lehky` | třída A, mechanická rutina | `haiku` | úprava podle vzoru, doplnění textu, přejmenování |
 
+- Copilot: model volí člověk v pickeru, obal ho nepřipíná (ID se mění).
 - Úroveň lze zvýšit; snížit jen s důvodem v úkolu. Třída C/D se nedeleguje
   před schválením plánu.
 - Rutinu levnějším modelem dělá subagent `task-executor`. Jeho zpráva je

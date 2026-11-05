@@ -30,3 +30,8 @@ Rules:
 - `npm ci` fails with npm 10 (S-36 in `SISTER-REPOS.md`); `npm install` works.
 - `model:` in command and agent frontmatter takes `opus`, `sonnet`, `haiku`;
   the Agent tool call can override the model per call.
+
+## 2026-11-05 T-6 claude-code
+- VS Code reads custom agents from `.claude/agents/*.md` (Claude format), so `task-executor` needs no Copilot copy (VS Code docs, checked 2026-11-05).
+- Prompt files: `.github/prompts/*.prompt.md`, fields `description`, `agent`, `model`, `tools`, `argument-hint`. A `tools` list restricts the tools; `agent` must be in it to call subagents.
+- Tool aliases `read edit search execute agent` come from the custom-agent reference; not yet confirmed for prompt files in a running VS Code (AC-21).
