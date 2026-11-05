@@ -38,6 +38,13 @@ Use this workflow for non-trivial work in this parent project and projects built
 4. Update the actual task state and its evidence. Keep generated logs separate from human decisions and test results.
 5. At handoff, list changed files, criteria with evidence, checks actually run, remaining risks, and the next useful step.
 
+## Entry commands, model tiers and notes
+
+- Claude Code entry commands live in `.claude/commands/`: `/discover-project`, `/plan-increment`, `/work-task T-N`. Other tools follow this workflow by hand.
+- Each task carries `Model:` (`silny` | `stredni` | `lehky`; defaults by risk: A lehky, B stredni, C and D silny). Strong models analyse, plan and review; routine class A/B implementation may go to the `task-executor` subagent. A delegate's report is a claim: review the diff and rerun the checks yourself.
+- Keep consent kinds apart (documentation write, scope, technical decision, risky operation, acceptance). Implemented, verified and accepted are different states. A new need found mid-task becomes `Q-N` in `PROJECT.md` or an idea; never edit `SPEC.md` to match the code.
+- Append terse English notes to `AGENT-NOTES.md`; it is not evidence, a decision or an approval.
+
 ## Tool compatibility
 
 `AGENTS.md` is the shared instruction source. Skills live canonically under `.agents/skills`; Claude Code's `.claude/skills` directory is a generated mirror. After changing a canonical skill, run `npm run agent:skills:sync`, then verify with `npm run agent:skills:check`.

@@ -32,6 +32,12 @@ přechod stavu a nástroj, který změnu zjistil; neukládá konverzace a
 nenahrazuje schválení ani testovací důkazy. Hooky Copilotu ve VS Code jsou
 ve Preview a Codex vyžaduje kontrolu/důvěru k projektovým hookům.
 
+**Příkazy, modely a jazyk.** Netriviální práci v Claude Code zahajují příkazy
+v `.claude/commands/` (`/discover-project`, `/plan-increment`, `/work-task`).
+Úkol má pole `Model:`; rutinu delegovaný subagent `task-executor`, ověření
+a evidence dělá vždy hlavní agent (D-13). Příkazy, agenti a `AGENT-NOTES.md`
+jsou anglicky, rozhodnutí, důkazy a předání česky.
+
 **Tohle je šablonová appka.** Konkrétní appka postavená na tomhle základu
 si tenhle soubor převezme a upraví podle svých skutečných potřeb (vlastní
 role, vlastní entity v sekci "Struktura projektu", vlastní obsah
