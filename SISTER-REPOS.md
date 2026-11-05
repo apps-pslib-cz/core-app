@@ -33,7 +33,7 @@ Stav: core-app [ ] · projects-v1-app [ ] · internship-v5-app [ ] · evaluation
 poznámka k opravě v každém repozitáři (datum, jak, čím ověřeno).
 Záznam se smaže, až jsou všechna políčka `[x]` nebo `[-]` - historie
 zůstane v gitu. Čísla `S-N` se nepřidělují znovu; nový záznam dostane
-číslo o jedna vyšší než nejvyšší dosud použité (zatím S-35).
+číslo o jedna vyšší než nejvyšší dosud použité (zatím S-36).
 
 Záznamy uzavřené před přesunem evidence sem (S-1 až S-29, na které
 odkazují komentáře v kódu odvozených appek) jsou v historii gitu
@@ -125,3 +125,17 @@ repozitáře ze stejné šablony (neověřeno).
 Oprava: neopraveno. Návrh: v `docs/deployment.md` uvést minimální verzi npm
 (11), nebo lockfile znovu vygenerovat s npm 10 a ověřit `npm ci` v obou verzích.
 Stav: core-app [ ] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
+
+### S-36 Schéma uživatele přijme libovolný název role (2026-11-05)
+Popis: `RolesSchema` je `z.array(z.string())`, takže `POST`/`PATCH`
+uživatele uloží do `User.roles` i neexistující roli (např. `teacher`).
+Kontroly oprávnění neznámou roli ignorují (`RoleChecker` pracuje s
+`APP_ROLES`) a zapisovat smí jen admin, dopad je proto malý: v DB zůstanou
+role, které appka nezná a UI je neukáže. Zjištěno dočasným testem
+v `internship-v5-app` (T-1): `CreateUserSchema` s `roles: ["teacher"]` projde.
+Místo: `src/types/validation/users.ts` (`RolesSchema`) - `core-app`
+a `internship-v5-app`; ostatní neověřeno.
+Oprava: neopraveno. Návrh: `z.array(z.enum(APP_ROLES))` - přidání role do
+`APP_ROLES` schéma rozšíří samo, takže důvod komentáře („aby nová role
+nevyžadovala úpravu schématu“) zůstane splněný.
+Stav: core-app [ ] · projects-v1-app [?] · internship-v5-app [ ] · evaluation-v1-app [?]
