@@ -89,7 +89,7 @@ function main() {
   }
 
   process.stderr.write(
-    `Commit přímo do větve '${branch}' je zakázán (AGENTS.md, "Práce ve větvi úkolu"). ` +
+    `Commit přímo do větve '${branch}' je zakázán (AGENTS.md, "Task branch"). ` +
       "Založ větev úkolu: git switch -c task/T-N-kratky-popis a commituj do ní. " +
       "Do hlavní větve slučuje až člověk po kontrole.\n",
   );

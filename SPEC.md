@@ -133,6 +133,10 @@ nejsou součástí tohoto souboru, patří do nového `SPEC.md`.
 - [ ] AC-21: Obaly fungují ve VS Code s Copilotem: příkazy se nabízejí po `/`,
   `tools` jsou přijaty a `/work-task` zavolá `task-executor` přes `runSubagent`.
   Ověřit ručně na úkolu třídy A.
+- [x] AC-22: `AGENTS.md` je anglicky mimo kód, uvozovky a české štítky
+  shrnutí; odkazy na jeho sekce v příkazech, obalech, skillu, hooku a
+  `CONVENTIONS.md` odpovídají novým názvům (`tests/unit/agentDocs.test.ts`,
+  D-15).
 
 ## 6. Mimo rozsah
 

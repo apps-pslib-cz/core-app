@@ -292,3 +292,12 @@ Důvod: Kopie postupu do dvou nástrojů by se rozešla (stejný problém řeš�
 Důsledek: Test hlídá, že obaly existují, mají stejný popis jako Claude příkaz a odkazují na existující zdroj. Názvy nástrojů v `tools` (`read`, `edit`, `search`, `execute`, `agent`) pocházejí z dokumentace custom agentů; že je prompt files ve VS Code přijmou beze změny a že `runSubagent` s `task-executor` funguje, ověřuje ručně AC-21. Copilot dál nemá vynucená oprávnění (IDEA-004). Codex zůstává bez příkazů.
 
 Schválení: uživatel v chatu dne 2026-11-05 (pokyn „dodělej příkazy pro Copilot“). Znění D-14 projde kontrolou při merge.
+
+## D-15 AGENTS.md anglicky (2026-11-05)
+Rozhodnutí: Načítaný `AGENTS.md` je celý anglicky, včetně názvů sekcí (Risk class, Task branch, Entry workflows, Consent and evidence, Model tiers and language, Constraints, Output). Česky zůstávají názvy polí a značek, na které odkazují záznamy (`Riziko:`, `Model:`, `Schválení:`), české štítky shrnutí pro člověka (Co se změnilo / Jak jsem to ověřil / Co není ověřeno), `CONVENTIONS.md`, metodika a evidence. Pravidlo, že agent s člověkem mluví česky, platí dál. Odkazy na sekce v příkazech, obalech pro Copilot, skillu, testech, hooku a `CONVENTIONS.md` jsou přejmenované. Doplňuje D-13 (anglické instrukce pro stroje).
+
+Důvod: Soubor se načítá v každé relaci a angličtina bývá pro model kratší v tokenech a přesnější. Výuková a hodnotitelná část zůstala česky: metodika, rozhodnutí, důkazy a předání.
+
+Důsledek: Úspora tokenů nebyla změřena (tokenizér nebyl v prostředí dostupný); počet bajtů ani řádků ji neukazuje. Změřit ji lze v Claude Code příkazem `/context` (řádek s paměťovými soubory) na větvi před a po (IDEA-008). Historické záznamy (D-12, T-3, `SISTER-REPOS.md`) odkazují na staré české názvy sekcí a zůstávají beze změny. Odvozené repozitáře s vlastním `AGENTS.md` se tím nemění; přenos je samostatný záznam v `SISTER-REPOS.md`. Test hlídá, že v `AGENTS.md` mimo kód, uvozovky a české štítky nezůstala česká próza.
+
+Schválení: uživatel v chatu dne 2026-11-05 („můžeme přeložit AGENTS do angličtiny“). Znění D-15 projde kontrolou při merge.

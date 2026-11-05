@@ -18,7 +18,7 @@ scope, or `current`).
 
 ## Load first (actually open these files)
 
-1. `AGENTS.md` - "Třída rizika", "Úrovně modelů a jazyk", "Souhlas a důkaz".
+1. `AGENTS.md` - "Risk class", "Model tiers and language", "Consent and evidence".
 2. `PROJECT.md` - phase, active increment, blocking `Q-N`.
 3. `DECISIONS.md` - the scope approval and decisions that already exist.
 4. `SPEC.md` - only the `AC-N` listed in that approval.

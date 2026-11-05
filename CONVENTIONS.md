@@ -59,7 +59,7 @@ z ní, co agent může dělat sám a co jen navrhnout. V tomto projektu typicky:
   force-push, změna oprávnění uživatelů.
 
 Pro C a D vždy nejdřív plán ke schválení, ne přímou implementaci — viz
-`AGENTS.md`, sekce „Třída rizika“ a Omezení (git operace, migrace,
+`AGENTS.md`, sekce „Risk class“ a „Constraints“ (git operace, migrace,
 závislosti).
 
 ## Obecná pravidla
@@ -220,7 +220,7 @@ Nejčastější typy: `feat`, `fix`, `chore`, `refactor`.
 
 Větev úkolu: `task/T-N-kratky-popis` (bez diakritiky, s pomlčkami),
 slučuje se `git merge --no-ff` až po souhlasu uživatele - postup
-v `AGENTS.md`, sekce „Práce ve větvi úkolu“.
+v `AGENTS.md`, sekce „Task branch“.
 
 ## Co preferovat / co nepoužívat
 
