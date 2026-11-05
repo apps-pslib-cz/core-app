@@ -283,3 +283,12 @@ Schválení: plán (příkazy a `PROJECT.md`, souhlasy a důkaz v `AGENTS.md`,
 úrovně modelů a jazyk jako nové rozhodnutí, testy) schválil uživatel v chatu
 dne 2026-11-05 pokynem „S plánem souhlasím, zapracuj, co jde“. Konkrétní
 znění D-13 projde kontrolou při merge.
+
+## D-14 Příkazy pro Copilot jako tenké obaly (2026-11-05)
+Rozhodnutí: Pro GitHub Copilot ve VS Code existují `.github/prompts/discover-project.prompt.md`, `plan-increment.prompt.md` a `work-task.prompt.md`. Jsou to tenké obaly (frontmatter `description`, `agent: agent`, `argument-hint`, `tools` + krátké mapování nástrojů), které odkazují na `.claude/commands/<název>.md` jako jediný zdroj postupu; postup se nekopíruje. Delegáta `task-executor` Copilot čte přímo z `.claude/agents/` (VS Code podporuje formát Claude agentů) a volá ho přes `runSubagent`. Model obal nepřipíná, vybírá ho člověk v pickeru.
+
+Důvod: Kopie postupu do dvou nástrojů by se rozešla (stejný problém řeší skills zrcadlem). Obal drží jen to, co je nástrojově specifické. ID modelů v Copilotu závisí na tarifu a mění se, takže pevné `model:` by se rozbilo; úroveň modelu zůstává pravidlem v `AGENTS.md` a v poli `Model:` úkolu.
+
+Důsledek: Test hlídá, že obaly existují, mají stejný popis jako Claude příkaz a odkazují na existující zdroj. Názvy nástrojů v `tools` (`read`, `edit`, `search`, `execute`, `agent`) pocházejí z dokumentace custom agentů; že je prompt files ve VS Code přijmou beze změny a že `runSubagent` s `task-executor` funguje, ověřuje ručně AC-21. Copilot dál nemá vynucená oprávnění (IDEA-004). Codex zůstává bez příkazů.
+
+Schválení: uživatel v chatu dne 2026-11-05 (pokyn „dodělej příkazy pro Copilot“). Znění D-14 projde kontrolou při merge.

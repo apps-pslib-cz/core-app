@@ -126,6 +126,13 @@ nejsou součástí tohoto souboru, patří do nového `SPEC.md`.
 - [ ] AC-19: Příkazy a `task-executor` fungují v běžícím Claude Code: příkazy
   se nabízejí v `/`, `/work-task` předá úkol agentovi na zvoleném modelu a
   po něm sám ověří diff i testy. Ověřit ručně na úkolu třídy A.
+- [x] AC-20: Copilot má pro každý ze tří Claude příkazů obal v
+  `.github/prompts/*.prompt.md` se stejným popisem, `agent: agent`, odkazem na
+  existující zdroj a bez kopie postupu; analytické obaly nemají nástroj
+  `execute`, `work-task` má `agent` (`tests/unit/agentDocs.test.ts`, D-14).
+- [ ] AC-21: Obaly fungují ve VS Code s Copilotem: příkazy se nabízejí po `/`,
+  `tools` jsou přijaty a `/work-task` zavolá `task-executor` přes `runSubagent`.
+  Ověřit ručně na úkolu třídy A.
 
 ## 6. Mimo rozsah
 
@@ -165,4 +172,4 @@ Hranice, které mají platit bezvýjimečně, vynucuje v Claude Code
 kryty jen textem v `AGENTS.md` (IDEA-004).
 
 Vstupní příkazy, úrovně modelů a poznámky agentů (`AGENT-NOTES.md`) jsou
-popsány v `AGENTS.md` a odůvodněny v D-13; jen Claude Code (IDEA-007).
+popsány v `AGENTS.md` a odůvodněny v D-13 a D-14; příkazy mají Claude Code a Copilot, Codex ne (IDEA-007).
