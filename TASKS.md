@@ -49,12 +49,5 @@ Hotovo (2026-11-05): IDEA-007 (část Copilot), AC-20, D-14. Ve větvi `task/T-6
 Stav: [x] hotovo
 
 ## T-7
-- nazev: Překlad AGENTS.md do angličtiny
-Cíl: Načítaný AGENTS.md je anglicky a všechny odkazy na jeho sekce sedí.
-Nápad: IDEA-006 (D-15)
-Splňuje: AC-22
-Závisí na: T-6
-Riziko: A
-Model: stredni
-Hotovo, když: `npx vitest run`, `npx tsc --noEmit -p .`, `npm run lint` a `npm run agent:skills:check` procházejí; AGENTS.md má do 200 řádků.
-Stav: [~]
+Hotovo (2026-11-05): IDEA-006, AC-22, D-15. Ve větvi `task/T-7-anglicky-agents` (z T-6). `AGENTS.md` přeložen do angličtiny včetně názvů sekcí (197 → 182 řádků, 10 575 → 10 556 bajtů; bajty tokeny neukazují); přejmenované odkazy v příkazech, obalech pro Copilot, skillu (zrcadlo přes `npm run agent:skills:sync`), hooku `guard-main-branch.mjs` a `CONVENTIONS.md`; české zůstaly názvy polí a štítky shrnutí. Ověřeno na Linuxové kopii: `npx vitest run` (89 testů), `npx tsc --noEmit -p .`, `npm run lint`, `npm run agent:skills:check`; mutacemi (česká próza v `AGENTS.md`, sekce přejmenována zpět, starý název v příkazu, starý název v hooku) ověřeno, že testy selžou. Neověřeno: skutečná úspora tokenů (tokenizér v prostředí nedostupný, IDEA-008), dopad na kvalitu dodržování pravidel modelem, odvozené repozitáře s vlastním `AGENTS.md` (zápis do `SISTER-REPOS.md` zbývá).
+Stav: [x] hotovo
