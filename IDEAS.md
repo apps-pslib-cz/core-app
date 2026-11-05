@@ -43,6 +43,6 @@ neodvozují.
 
 ## IDEA-007
 - Nazev: Příkazy a dělba modelů i pro Copilot a Codex
-- Navrh: Ověřit, jak Copilot (prompt files) a Codex nabízejí vstupní příkazy a volbu modelu, a zapsat ekvivalent `/discover-project`, `/plan-increment` a `/work-task`; do té doby jsou kryty jen textem v `AGENTS.md`.
-- Stav: nový
-- Vazby: žádné
+- Navrh: Copilot: tenké obaly `.github/prompts` nad Claude příkazy (D-14), hotovo. Codex zatím zůstává bez příkazů; ověřit, jak nabízí vstupní postupy a volbu modelu, a doplnit ekvivalent.
+- Stav: rozpracováno
+- Vazby: [T-6](TASKS.md#t-6)
