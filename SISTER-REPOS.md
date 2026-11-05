@@ -133,8 +133,9 @@ Oprava (`core-app`, T-3, 2026-11-04): `permissions` (deny/ask) a hook
 `tests/unit/guardMainBranch.test.ts` (ověřeno mutací), D-12. Jen Claude Code;
 Copilot a Codex viz IDEA-004. Pravidla `permissions` ještě nejsou ověřena
 v běžícím Claude Code (AC-13).
-Stav: core-app [x] · projects-v1-app [x] · internship-v5-app [?] · evaluation-v1-app [?]
+Stav: core-app [x] · projects-v1-app [x] · internship-v5-app [?] · evaluation-v1-app [x]
 `projects-v1-app` (2026-11-04, T-56): `.claude/settings.json` (permissions + hook), `guard-main-branch.mjs` a testy převzaty 1:1; ověřeno testy a živě na `main` (blokace) i na větvi úkolu (povolení). Běžící Claude Code zůstává AC-13.
+`evaluation-v1-app` (2026-11-04, T-55, větev `task/T-55-vynuceni-a-rizika`, D-31): `.claude/settings.json`, `guard-main-branch.mjs` a test 1:1; skript hooku proti repu na `main` → exit 2, s `git switch -c` → 0. Blokace v běžícím Claude Code na `main` až po merge (na `main` platí starý `settings.json`); `permissions` neověřeny (AC-13).
 
 ### S-34 Třídy rizika chybí v `AGENTS.md` (2026-11-04)
 Popis: Třídy A-D (metodika, kapitola 6) byly jen v `CONVENTIONS.md` a
@@ -147,8 +148,9 @@ Místo: `AGENTS.md`, `.agents/skills/agentic-engineering/SKILL.md`,
 Oprava (`core-app`, T-3, 2026-11-04): sekce „Třída rizika“ v `AGENTS.md`,
 věta ve skillu (zrcadlo přes `npm run agent:skills:sync`), opravený odkaz
 v `CONVENTIONS.md`, test v `tests/unit/agentDocs.test.ts` (ověřeno mutací).
-Stav: core-app [x] · projects-v1-app [x] · internship-v5-app [?] · evaluation-v1-app [?]
+Stav: core-app [x] · projects-v1-app [x] · internship-v5-app [?] · evaluation-v1-app [x]
 `projects-v1-app` (2026-11-04, T-56): sekce „Třída rizika“ v `AGENTS.md` převzata; věta ve skillu se nepřevzala - tahle appka skill `agentic-engineering` nemá.
+`evaluation-v1-app` (2026-11-04, T-55): sekce v `AGENTS.md` (třída C navíc anonymita respondentů), věta ve skillu, odkaz v `CONVENTIONS.md`; místo `agentDocs.test.ts` (appka ho nemá) jen tento případ v `tests/unit/agentRules.test.ts`.
 
 ### S-35 Autorizace API bez testů (2026-11-04)
 Popis: V `tests/unit` nebyl žádný test `RoleChecker`, `requireAuthentication`
@@ -160,8 +162,9 @@ Oprava (`core-app`, T-3, 2026-11-04): `tests/unit/apiAuthorization.test.ts`
 (24 testů; mutacemi ověřeno odstranění kontroly vlastního profilu, role u
 DELETE, `requireRole` i zákazu přidělení `admin`). Je to vzor: odvozený
 repozitář přidá stejné případy pro vlastní routy. Živé ověření `curl` zbývá.
-Stav: core-app [x] · projects-v1-app [ ] · internship-v5-app [?] · evaluation-v1-app [?]
+Stav: core-app [x] · projects-v1-app [ ] · internship-v5-app [?] · evaluation-v1-app [ ]
 `projects-v1-app` (2026-11-04, T-56): zatím neřešeno - šablonový test je pro model `roles: string[]`, appka má booleany; přepsání na vlastní routy je samostatný úkol.
+`evaluation-v1-app` (2026-11-04): týká se - unit test autorizace rout uživatelů chybí (průzkumy kryje maticový `surveyPolicy.test.ts`, uživatele jen e2e proti DB). Šablonový test nejde 1:1: appka nemá `sync-active`/`sync-avatars`, má `timetableTeacherCode` a role `admin ⊇ management ⊇ user`. Samostatný úkol.
 
 ### S-36 `npm ci` selže s npm 10 (2026-11-04)
 Popis: `package-lock.json` (lockfileVersion 3) projde `npm ci` s npm 11, ale
@@ -173,4 +176,5 @@ Místo: `package-lock.json`, `docs/deployment.md` - `core-app`; odvozené
 repozitáře ze stejné šablony (neověřeno).
 Oprava: neopraveno. Návrh: v `docs/deployment.md` uvést minimální verzi npm
 (11), nebo lockfile znovu vygenerovat s npm 10 a ověřit `npm ci` v obou verzích.
-Stav: core-app [ ] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [?]
+Stav: core-app [ ] · projects-v1-app [?] · internship-v5-app [?] · evaluation-v1-app [ ]
+`evaluation-v1-app` (2026-11-04): ověřeno na kopii `package.json` + lockfilu - npm 10.9.9 `npm ci --dry-run` → `Missing: typescript@5.9.3`, npm 11.21.1 projde. Příčina: nepovinná peer závislost `tsconfck` (pod `vite-tsconfig-paths`) na `typescript ^5`, appka má `typescript` 6. `docs/deployment.md` tu předepisuje jen Node LTS v20+ (s npm 10).
